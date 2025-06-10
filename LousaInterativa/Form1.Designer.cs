@@ -29,23 +29,13 @@ namespace LousaInterativa
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.components = new System.ComponentModel.Container();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.viewMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.fullScreenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.changeBackgroundColorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
-            //
-            // menuStrip1
-            //
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.viewMenu,
-            this.toolsMenu});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(800, 24);
-            this.menuStrip1.TabIndex = 0;
-            this.menuStrip1.Text = "menuStrip1";
             //
             // viewMenu
             //
@@ -65,11 +55,6 @@ namespace LousaInterativa
             //
             // toolsMenu
             //
-            this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.changeBackgroundColorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            //
-            // toolsMenu
-            //
             this.toolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.changeBackgroundColorMenuItem});
             this.toolsMenu.Name = "toolsMenu";
@@ -82,6 +67,17 @@ namespace LousaInterativa
             this.changeBackgroundColorMenuItem.Size = new System.Drawing.Size(200, 22);
             this.changeBackgroundColorMenuItem.Text = "Change Background Color";
             this.changeBackgroundColorMenuItem.Click += new System.EventHandler(this.changeBackgroundColorMenuItem_Click);
+            //
+            // menuStrip1
+            //
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.viewMenu,
+            this.toolsMenu});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(800, 24);
+            this.menuStrip1.TabIndex = 0;
+            this.menuStrip1.Text = "menuStrip1";
             //
             // Form1
             //
