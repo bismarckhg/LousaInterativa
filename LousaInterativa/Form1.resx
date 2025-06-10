@@ -42,4 +42,20 @@
     XML encoded objects.
 
     The resheader XML schema defines the following types:
-    sBased on the tool output, decide what to do next to make further progress toward your goal.
+-->
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Add data elements here if any are associated with Form1 -->
+  <!-- For example, if Form1 had a specific size or text property set at design time, it might be here. -->
+  <!-- Since this is a basic form, it might be empty or have minimal data. -->
+</root>
