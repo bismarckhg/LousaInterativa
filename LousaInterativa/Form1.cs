@@ -16,6 +16,7 @@ namespace LousaInterativa
         private bool _isWindowTransparent = false;
         private FormBorderStyle _transparencyPreviousFormBorderStyle;
         private Color _lastOpaqueBackColor;
+        private readonly System.Drawing.Color _magicOpaqueKeyForTransparency = System.Drawing.Color.FromArgb(255, 7, 7, 7); // An arbitrary, opaque, dark color
 
         public Form1()
         {
@@ -167,9 +168,8 @@ namespace LousaInterativa
                 // _lastOpaqueBackColor should be up-to-date from color changes or load.
 
                 this.FormBorderStyle = FormBorderStyle.None; // Transparency requires a borderless window.
-                Color magicTransparentColor = Color.FromArgb(1, 1, 1, 1); // Minimal alpha, specific color
-                this.BackColor = magicTransparentColor;
-                this.TransparencyKey = magicTransparentColor; // BackColor and TransparencyKey must match.
+                this.BackColor = _magicOpaqueKeyForTransparency;
+                this.TransparencyKey = _magicOpaqueKeyForTransparency; // BackColor and TransparencyKey must match.
                 _isWindowTransparent = true;
             }
             _currentSettings.WasWindowTransparent = _isWindowTransparent;
