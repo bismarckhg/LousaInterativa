@@ -10,8 +10,18 @@ Lousa Interativa (Interactive Whiteboard) is a simple Windows Forms application 
     -   Provides an immersive, borderless window experience.
 -   **Customizable Background Color:**
     -   Change the application's background color via the **Tools > Change Background Color** menu option.
-    -   A color dialog allows selection of any color, including alpha (transparency) values.
-    -   If a color with transparency is selected, the form will become semi-transparent.
+    -   A color dialog allows selection of any color, including alpha (transparency) values for a semi-transparent background.
+-   **Toggle Window Transparency:**
+    -   Activate/deactivate full window transparency, making the client area see-through and removing borders.
+    -   Toggle with the **F10** key or via the **View > Toggle Transparency** menu option.
+    -   When transparency is deactivated, the previously chosen background color and form style are restored.
+-   **Settings Persistence:**
+    -   The application automatically saves your last used settings:
+        -   Background color
+        -   Full-screen state
+        -   Window transparency state
+        -   Normal window size and location
+    -   These settings are loaded when the application starts, restoring your previous session's look and feel. Settings are stored in an XML file in your local application data folder (`%LOCALAPPDATA%/LousaInterativaCompany/LousaInterativaApp/settings.xml`).
 
 ## Technologies Used
 

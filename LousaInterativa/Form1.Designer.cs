@@ -34,13 +34,15 @@ namespace LousaInterativa
             this.fullScreenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.changeBackgroundColorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toggleTransparencyMenuItem = new System.Windows.Forms.ToolStripMenuItem(); // Instantiation
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             //
             // viewMenu
             //
             this.viewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fullScreenMenuItem});
+            this.fullScreenMenuItem,
+            this.toggleTransparencyMenuItem}); // Added here
             this.viewMenu.Name = "viewMenu";
             this.viewMenu.Size = new System.Drawing.Size(44, 20);
             this.viewMenu.Text = "View";
@@ -52,6 +54,14 @@ namespace LousaInterativa
             this.fullScreenMenuItem.Size = new System.Drawing.Size(180, 22);
             this.fullScreenMenuItem.Text = "Full Screen";
             this.fullScreenMenuItem.Click += new System.EventHandler(this.fullScreenMenuItem_Click);
+            //
+            // toggleTransparencyMenuItem
+            //
+            this.toggleTransparencyMenuItem.Name = "toggleTransparencyMenuItem";
+            this.toggleTransparencyMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F10;
+            this.toggleTransparencyMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.toggleTransparencyMenuItem.Text = "&Toggle Transparency";
+            this.toggleTransparencyMenuItem.Click += new System.EventHandler(this.toggleTransparencyMenuItem_Click);
             //
             // toolsMenu
             //
@@ -104,5 +114,6 @@ namespace LousaInterativa
         private System.Windows.Forms.ToolStripMenuItem fullScreenMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolsMenu;
         private System.Windows.Forms.ToolStripMenuItem changeBackgroundColorMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toggleTransparencyMenuItem; // Declaration
     }
 }
