@@ -50,6 +50,16 @@ namespace LousaInterativa
             _previousWindowState = this.WindowState;       // For full-screen feature's runtime restoration
             // _transparencyPreviousFormBorderStyle will be set when transparency is first toggled by user or load.
 
+            // Apply menu visibility
+            if (this.menuStrip1 != null)
+            {
+                this.menuStrip1.Visible = _currentSettings.IsMenuVisible;
+            }
+            if (this.toggleMenuVisibilityMenuItem != null) // Sync check state on load
+            {
+                this.toggleMenuVisibilityMenuItem.Checked = this.menuStrip1.Visible;
+            }
+
             // Apply states if they were active
             // Note: ToggleFullScreen() and ToggleWindowTransparency() will call SaveSettings.
             if (_currentSettings.IsFullScreen)
@@ -99,6 +109,14 @@ namespace LousaInterativa
             _currentSettings.IsFullScreen = _isFullScreen;
             _currentSettings.WasWindowTransparent = _isWindowTransparent;
             _currentSettings.FormOpacity = this._currentFormOpacity; // Ensure final opacity is saved
+            if (this.menuStrip1 != null)
+            {
+                _currentSettings.IsMenuVisible = this.menuStrip1.Visible;
+            }
+            else
+            {
+                _currentSettings.IsMenuVisible = false; // Default if menuStrip1 is unexpectedly null
+            }
 
             SettingsManager.SaveSettings(_currentSettings);
         }
@@ -198,6 +216,30 @@ namespace LousaInterativa
             SettingsManager.SaveSettings(_currentSettings);
         }
 
+        private void ToggleMenuVisibility()
+        {
+            if (this.menuStrip1 != null)
+            {
+                this.menuStrip1.Visible = !this.menuStrip1.Visible;
+
+                if (this._currentSettings != null)
+                {
+                    this._currentSettings.IsMenuVisible = this.menuStrip1.Visible;
+                    SettingsManager.SaveSettings(this._currentSettings);
+                }
+
+                if (this.toggleMenuVisibilityMenuItem != null)
+                {
+                    this.toggleMenuVisibilityMenuItem.Checked = this.menuStrip1.Visible;
+                }
+            }
+        }
+
+        private void toggleMenuVisibilityMenuItem_Click(object sender, EventArgs e)
+        {
+            ToggleMenuVisibility();
+        }
+
         private void ApplyFormOpacity(double opacityLevel, bool saveSetting = true)
         {
             // Clamp opacityLevel between 0.0 (fully transparent) and 1.0 (fully opaque)
@@ -283,6 +325,11 @@ namespace LousaInterativa
                     this.opacityTrackBar.Value = (int)(this._currentFormOpacity * 100);
                 }
                 e.Handled = true; // Prevent further processing of F9
+            }
+            else if (e.KeyCode == Keys.F8)
+            {
+                ToggleMenuVisibility();
+                e.Handled = true; // Mark the event as handled
             }
         }
 
