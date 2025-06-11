@@ -37,6 +37,7 @@ namespace LousaInterativa
             this.toggleTransparencyMenuItem = new System.Windows.Forms.ToolStripMenuItem(); // Instantiation
             this.opacityTrackBar = new System.Windows.Forms.TrackBar();
             this.adjustOpacityMenuItem = new System.Windows.Forms.ToolStripMenuItem(); // Instantiation
+            this.toggleMenuVisibilityMenuItem = new System.Windows.Forms.ToolStripMenuItem(); // Instantiation
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.opacityTrackBar)).BeginInit();
             this.SuspendLayout();
@@ -45,7 +46,8 @@ namespace LousaInterativa
             //
             this.viewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fullScreenMenuItem,
-            this.toggleTransparencyMenuItem}); // Added here
+            this.toggleTransparencyMenuItem,
+            this.toggleMenuVisibilityMenuItem}); // Added here
             this.viewMenu.Name = "viewMenu";
             this.viewMenu.Size = new System.Drawing.Size(44, 20);
             this.viewMenu.Text = "View";
@@ -65,6 +67,13 @@ namespace LousaInterativa
             this.toggleTransparencyMenuItem.Size = new System.Drawing.Size(180, 22);
             this.toggleTransparencyMenuItem.Text = "&Toggle Transparency";
             this.toggleTransparencyMenuItem.Click += new System.EventHandler(this.toggleTransparencyMenuItem_Click);
+            //
+            // toggleMenuVisibilityMenuItem
+            //
+            this.toggleMenuVisibilityMenuItem.Name = "toggleMenuVisibilityMenuItem";
+            this.toggleMenuVisibilityMenuItem.Size = new System.Drawing.Size(180, 22); // Consistent with others in View
+            this.toggleMenuVisibilityMenuItem.Text = "Show/Hide &Menu";
+            this.toggleMenuVisibilityMenuItem.Click += new System.EventHandler(this.toggleMenuVisibilityMenuItem_Click);
             //
             // toolsMenu
             //
@@ -145,5 +154,6 @@ namespace LousaInterativa
         private System.Windows.Forms.ToolStripMenuItem toggleTransparencyMenuItem; // Declaration
         private System.Windows.Forms.TrackBar opacityTrackBar; // Declaration
         private System.Windows.Forms.ToolStripMenuItem adjustOpacityMenuItem; // Declaration
+        private System.Windows.Forms.ToolStripMenuItem toggleMenuVisibilityMenuItem; // Declaration
     }
 }
