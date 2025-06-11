@@ -12,6 +12,7 @@ namespace LousaInterativa
         public FormBorderStyle NormalFormBorderStyle { get; set; }
         public Size NormalFormSize { get; set; }
         public Point NormalFormLocation { get; set; }
+        public double FormOpacity { get; set; } // New property
 
         public AppSettings()
         {
@@ -22,6 +23,7 @@ namespace LousaInterativa
             NormalFormBorderStyle = FormBorderStyle.Sizable;
             NormalFormSize = new Size(816, 523); // Default size, can be adjusted. e.g. 800,600
             NormalFormLocation = new Point(100, 100); // Default location
+            FormOpacity = 1.0; // Default to 100% opaque
         }
     }
 }
