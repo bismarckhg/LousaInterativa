@@ -38,8 +38,11 @@ namespace LousaInterativa
             this.opacityTrackBar = new System.Windows.Forms.TrackBar();
             this.adjustOpacityMenuItem = new System.Windows.Forms.ToolStripMenuItem(); // Instantiation
             this.toggleMenuVisibilityMenuItem = new System.Windows.Forms.ToolStripMenuItem(); // Instantiation
+            this.mainToolStrip = new System.Windows.Forms.ToolStrip(); // Instantiation
+            this.penToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.opacityTrackBar)).BeginInit();
+            this.mainToolStrip.SuspendLayout(); // For adding items
             this.SuspendLayout();
             //
             // viewMenu
@@ -124,13 +127,39 @@ namespace LousaInterativa
             this.opacityTrackBar.Visible = false; // Initially hidden
             this.opacityTrackBar.Scroll += new System.EventHandler(this.opacityTrackBar_Scroll);
             //
+            // mainToolStrip
+            //
+            this.mainToolStrip.Dock = System.Windows.Forms.DockStyle.Top;
+            this.mainToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.mainToolStrip.Location = new System.Drawing.Point(0, 0); // Actual Y will be below opacityTrackBar
+            this.mainToolStrip.Name = "mainToolStrip";
+            this.mainToolStrip.Size = new System.Drawing.Size(800, 25); // Height 25, width will be auto
+            this.mainToolStrip.TabIndex = 2; // After menuStrip1 (0) and opacityTrackBar (1)
+            this.mainToolStrip.Text = "mainToolStrip";
+            this.mainToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.penToolStripButton});
+            //
+            // penToolStripButton
+            //
+            this.penToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.penToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.penToolStripButton.Name = "penToolStripButton";
+            this.penToolStripButton.Size = new System.Drawing.Size(34, 22); // Example text-based size
+            this.penToolStripButton.Text = "Pen";
+            this.penToolStripButton.CheckOnClick = true;
+            this.penToolStripButton.Click += new System.EventHandler(this.penToolStripButton_Click);
+            //
             // Form1
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.opacityTrackBar); // Added TrackBar
+            // Corrected order for DockStyle.Top: Last added is lowest.
+            // To have opacityTrackBar at the top, then mainToolStrip, then menuStrip1 (if visible):
+            // Add menuStrip1 first, then mainToolStrip, then opacityTrackBar.
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.mainToolStrip);
+            this.Controls.Add(this.opacityTrackBar);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
@@ -139,6 +168,8 @@ namespace LousaInterativa
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.opacityTrackBar)).EndInit();
+            this.mainToolStrip.ResumeLayout(false);
+            this.mainToolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -155,5 +186,7 @@ namespace LousaInterativa
         private System.Windows.Forms.TrackBar opacityTrackBar; // Declaration
         private System.Windows.Forms.ToolStripMenuItem adjustOpacityMenuItem; // Declaration
         private System.Windows.Forms.ToolStripMenuItem toggleMenuVisibilityMenuItem; // Declaration
+        private System.Windows.Forms.ToolStrip mainToolStrip; // Declaration
+        private System.Windows.Forms.ToolStripButton penToolStripButton; // Declaration
     }
 }

@@ -9,6 +9,15 @@ Lousa Interativa (Interactive Whiteboard) is a simple Windows Forms application 
     -   Alternatively, use the **View > Show/Hide Menu** option. This menu item displays a checkmark if the menu is currently visible.
     -   Even if the menu bar is hidden, menu commands can typically be accessed by pressing the `Alt` key (e.g., `Alt+V` for the View menu, then navigate with arrow keys or mnemonics like 'M' for "Show/Hide Menu").
 
+## Toolbar
+The application features a toolbar docked at the top of the window (below the opacity adjustment trackbar, if visible) for quick access to drawing tools and other commands.
+
+### Drawing Tools
+*   **Pen Tool:**
+    *   **Button:** "Pen" (text button on the toolbar).
+    *   **Functionality:** Click to activate or deactivate Pen mode. When active, the mouse cursor changes to a crosshair, indicating that drawing input is expected.
+    *   *(Note: Actual drawing on the canvas is not yet implemented.)*
+
 ## Features
 
 -   **Full-Screen Mode (F11 / View Menu):**
@@ -29,7 +38,7 @@ Lousa Interativa (Interactive Whiteboard) is a simple Windows Forms application 
         -   Full-screen state
         -   Window transparency state (on/off for F10 mode)
         -   Form Opacity level (for F9 control)
-        -   **Menu Bar Visibility (shown/hidden)**
+        -   Menu Bar Visibility (shown/hidden)
         -   Normal window size and location
     -   Settings are stored in an XML file: `%LOCALAPPDATA%/LousaInterativaCompany/LousaInterativaApp/settings.xml`.
 

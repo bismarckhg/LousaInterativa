@@ -18,6 +18,7 @@ namespace LousaInterativa
         private Color _lastOpaqueBackColor;
         private readonly System.Drawing.Color _magicOpaqueKeyForTransparency = System.Drawing.Color.FromArgb(255, 7, 7, 7); // An arbitrary, opaque, dark color
         private double _currentFormOpacity = 1.0; // Field for current form opacity level
+        private bool _isPenToolActive = false; // Field for pen tool state
 
         public Form1()
         {
@@ -298,6 +299,24 @@ namespace LousaInterativa
         {
             double newOpacity = (double)this.opacityTrackBar.Value / 100.0;
             ApplyFormOpacity(newOpacity); // saveSetting defaults to true
+        }
+
+        private void penToolStripButton_Click(object sender, EventArgs e)
+        {
+            // penToolStripButton.Checked state is automatically toggled due to CheckOnClick = true
+            this._isPenToolActive = this.penToolStripButton.Checked;
+
+            if (this._isPenToolActive)
+            {
+                this.Cursor = System.Windows.Forms.Cursors.Cross; // Use Crosshair cursor as placeholder for pen
+
+                // Future: If other tools exist, ensure they are unchecked.
+                // Example: if (this.eraserToolStripButton != null) this.eraserToolStripButton.Checked = false;
+            }
+            else
+            {
+                this.Cursor = System.Windows.Forms.Cursors.Default;
+            }
         }
 
         private void fullScreenMenuItem_Click(object sender, System.EventArgs e)
