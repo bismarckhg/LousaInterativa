@@ -15,8 +15,14 @@ The application features a toolbar docked at the top of the window (below the op
 ### Drawing Tools
 *   **Pen Tool:**
     *   **Button:** "Pen" (text button on the toolbar).
-    *   **Functionality:** Click to activate or deactivate Pen mode. When active, the mouse cursor changes to a crosshair, indicating that drawing input is expected.
-    *   *(Note: Actual drawing on the canvas is not yet implemented.)*
+    *   **Functionality:**
+        *   Click to activate or deactivate Pen mode. When active, the mouse cursor changes to a crosshair.
+        *   **To Draw a Line:**
+            1.  Activate the Pen tool.
+            2.  Click on the whiteboard (the main form area) to set the starting point of your line. A temporary marker may indicate this point.
+            3.  Click again on the whiteboard to set the end point of your line.
+            4.  The line will be drawn using the currently selected Pen Color and Pen Size.
+    *   *(Note: More advanced drawing features like freehand drawing, shapes, selection, and editing are planned for future updates.)*
 *   **Pen Color Tool:**
     *   **Button:** "Color" (text button on the toolbar, next to "Pen").
     *   **Functionality:** Click to open a color selection dialog. The chosen color becomes the active pen color for subsequent drawing operations.
