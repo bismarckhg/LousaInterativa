@@ -41,8 +41,9 @@ namespace LousaInterativa
             this.mainToolStrip = new System.Windows.Forms.ToolStrip(); // Instantiation
             this.selectToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation
             this.penToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation
-            this.penColorToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation
-            this.penSizeToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation
+            this.linesToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation - New Lines Tool
+            this.lineColorToolStripButton = new System.Windows.Forms.ToolStripButton(); // Renamed from penColorToolStripButton
+            this.lineThicknessToolStripButton = new System.Windows.Forms.ToolStripButton(); // Renamed from penSizeToolStripButton
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.opacityTrackBar)).BeginInit();
             this.mainToolStrip.SuspendLayout(); // For adding items
@@ -55,30 +56,30 @@ namespace LousaInterativa
             this.toggleTransparencyMenuItem,
             this.toggleMenuVisibilityMenuItem}); // Added here
             this.viewMenu.Name = "viewMenu";
-            this.viewMenu.Size = new System.Drawing.Size(44, 20);
-            this.viewMenu.Text = "View";
+            this.viewMenu.Size = new System.Drawing.Size(48, 20); // Adjusted size for "Exibir"
+            this.viewMenu.Text = "Exibir"; // Translated
             //
             // fullScreenMenuItem
             //
             this.fullScreenMenuItem.Name = "fullScreenMenuItem";
             this.fullScreenMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F11;
-            this.fullScreenMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.fullScreenMenuItem.Text = "Full Screen";
+            this.fullScreenMenuItem.Size = new System.Drawing.Size(252, 22); // Adjusted size for new text
+            this.fullScreenMenuItem.Text = "Tela Cheia (F11)"; // Translated
             this.fullScreenMenuItem.Click += new System.EventHandler(this.fullScreenMenuItem_Click);
             //
             // toggleTransparencyMenuItem
             //
             this.toggleTransparencyMenuItem.Name = "toggleTransparencyMenuItem";
             this.toggleTransparencyMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F10;
-            this.toggleTransparencyMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.toggleTransparencyMenuItem.Text = "&Toggle Transparency";
+            this.toggleTransparencyMenuItem.Size = new System.Drawing.Size(252, 22); // Adjusted size for new text
+            this.toggleTransparencyMenuItem.Text = "Alternar Transparência (F10)"; // Translated
             this.toggleTransparencyMenuItem.Click += new System.EventHandler(this.toggleTransparencyMenuItem_Click);
             //
             // toggleMenuVisibilityMenuItem
             //
             this.toggleMenuVisibilityMenuItem.Name = "toggleMenuVisibilityMenuItem";
-            this.toggleMenuVisibilityMenuItem.Size = new System.Drawing.Size(180, 22); // Consistent with others in View
-            this.toggleMenuVisibilityMenuItem.Text = "Show/Hide &Menu";
+            this.toggleMenuVisibilityMenuItem.Size = new System.Drawing.Size(252, 22); // Adjusted size for new text
+            this.toggleMenuVisibilityMenuItem.Text = "Alternar Visibilidade do Menu (F8)"; // Translated
             this.toggleMenuVisibilityMenuItem.Click += new System.EventHandler(this.toggleMenuVisibilityMenuItem_Click);
             //
             // toolsMenu
@@ -87,22 +88,22 @@ namespace LousaInterativa
             this.changeBackgroundColorMenuItem,
             this.adjustOpacityMenuItem}); // Added here
             this.toolsMenu.Name = "toolsMenu";
-            this.toolsMenu.Size = new System.Drawing.Size(46, 20);
-            this.toolsMenu.Text = "Tools";
+            this.toolsMenu.Size = new System.Drawing.Size(84, 20);  // Adjusted size for "Ferramentas"
+            this.toolsMenu.Text = "Ferramentas"; // Translated
             //
             // changeBackgroundColorMenuItem
             //
             this.changeBackgroundColorMenuItem.Name = "changeBackgroundColorMenuItem";
-            this.changeBackgroundColorMenuItem.Size = new System.Drawing.Size(200, 22); // Keep consistent if possible
-            this.changeBackgroundColorMenuItem.Text = "Change Background Color";
+            this.changeBackgroundColorMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.changeBackgroundColorMenuItem.Text = "Alterar Cor de Fundo"; // Translated
             this.changeBackgroundColorMenuItem.Click += new System.EventHandler(this.changeBackgroundColorMenuItem_Click);
             //
             // adjustOpacityMenuItem
             //
             this.adjustOpacityMenuItem.Name = "adjustOpacityMenuItem";
             this.adjustOpacityMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F9;
-            this.adjustOpacityMenuItem.Size = new System.Drawing.Size(200, 22); // Consistent size
-            this.adjustOpacityMenuItem.Text = "&Adjust Opacity";
+            this.adjustOpacityMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.adjustOpacityMenuItem.Text = "Ajustar Opacidade (F9)"; // Translated
             this.adjustOpacityMenuItem.Click += new System.EventHandler(this.adjustOpacityMenuItem_Click);
             //
             // menuStrip1
@@ -142,16 +143,18 @@ namespace LousaInterativa
             this.mainToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.selectToolStripButton,
             this.penToolStripButton,
-            this.penColorToolStripButton,
-            this.penSizeToolStripButton});
+            this.linesToolStripButton, // Added new Lines Tool button
+            this.lineColorToolStripButton, // Renamed from penColorToolStripButton
+            this.lineThicknessToolStripButton}); // Renamed from penSizeToolStripButton
             //
             // selectToolStripButton
             //
             this.selectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.selectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.selectToolStripButton.Name = "selectToolStripButton";
-            this.selectToolStripButton.Size = new System.Drawing.Size(45, 22); // Example for "Select"
-            this.selectToolStripButton.Text = "Select";
+            this.selectToolStripButton.Size = new System.Drawing.Size(64, 22); // Adjusted for "Selecionar"
+            this.selectToolStripButton.Text = "Selecionar"; // Translated
+            this.selectToolStripButton.ToolTipText = "Selecionar Formas"; // Translated
             this.selectToolStripButton.CheckOnClick = true;
             this.selectToolStripButton.Click += new System.EventHandler(this.selectToolStripButton_Click);
             //
@@ -163,25 +166,39 @@ namespace LousaInterativa
             this.penToolStripButton.Size = new System.Drawing.Size(34, 22); // Example text-based size
             this.penToolStripButton.Text = "Pen";
             this.penToolStripButton.CheckOnClick = true;
+            this.penToolStripButton.Visible = false; // Disable pen tool
             this.penToolStripButton.Click += new System.EventHandler(this.penToolStripButton_Click);
             //
-            // penColorToolStripButton
+            // linesToolStripButton
             //
-            this.penColorToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.penColorToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.penColorToolStripButton.Name = "penColorToolStripButton";
-            this.penColorToolStripButton.Size = new System.Drawing.Size(40, 22); // Example for "Color"
-            this.penColorToolStripButton.Text = "Color";
-            this.penColorToolStripButton.Click += new System.EventHandler(this.penColorToolStripButton_Click);
+            this.linesToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.linesToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.linesToolStripButton.Name = "linesToolStripButton";
+            this.linesToolStripButton.Size = new System.Drawing.Size(46, 22); // Adjusted size for "Linhas"
+            this.linesToolStripButton.Text = "Linhas";
+            this.linesToolStripButton.ToolTipText = "Desenhar Linhas";
+            this.linesToolStripButton.CheckOnClick = true;
+            this.linesToolStripButton.Click += new System.EventHandler(this.linesToolStripButton_Click);
             //
-            // penSizeToolStripButton
+            // lineColorToolStripButton
             //
-            this.penSizeToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.penSizeToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.penSizeToolStripButton.Name = "penSizeToolStripButton";
-            this.penSizeToolStripButton.Size = new System.Drawing.Size(34, 22); // Example for "Size"
-            this.penSizeToolStripButton.Text = "Size";
-            this.penSizeToolStripButton.Click += new System.EventHandler(this.penSizeToolStripButton_Click);
+            this.lineColorToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.lineColorToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.lineColorToolStripButton.Name = "lineColorToolStripButton";
+            this.lineColorToolStripButton.Size = new System.Drawing.Size(78, 22); // Adjusted for "Cor da Linha"
+            this.lineColorToolStripButton.Text = "Cor da Linha";
+            this.lineColorToolStripButton.ToolTipText = "Selecionar Cor da Linha";
+            this.lineColorToolStripButton.Click += new System.EventHandler(this.lineColorToolStripButton_Click);
+            //
+            // lineThicknessToolStripButton
+            //
+            this.lineThicknessToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.lineThicknessToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.lineThicknessToolStripButton.Name = "lineThicknessToolStripButton";
+            this.lineThicknessToolStripButton.Size = new System.Drawing.Size(120, 22); // Adjusted for "Espessura da Linha"
+            this.lineThicknessToolStripButton.Text = "Espessura da Linha";
+            this.lineThicknessToolStripButton.ToolTipText = "Selecionar Espessura da Linha";
+            this.lineThicknessToolStripButton.Click += new System.EventHandler(this.lineThicknessToolStripButton_Click);
             //
             // Form1
             //
@@ -196,7 +213,7 @@ namespace LousaInterativa
             this.Controls.Add(this.opacityTrackBar);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Lousa Interativa"; // Translated Form Title
             this.KeyPreview = true;
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.menuStrip1.ResumeLayout(false);
@@ -222,8 +239,9 @@ namespace LousaInterativa
         private System.Windows.Forms.ToolStripMenuItem toggleMenuVisibilityMenuItem; // Declaration
         private System.Windows.Forms.ToolStrip mainToolStrip; // Declaration
         private System.Windows.Forms.ToolStripButton penToolStripButton; // Declaration
-        private System.Windows.Forms.ToolStripButton penColorToolStripButton; // Declaration
-        private System.Windows.Forms.ToolStripButton penSizeToolStripButton; // Declaration
+        private System.Windows.Forms.ToolStripButton lineColorToolStripButton; // Renamed from penColorToolStripButton
+        private System.Windows.Forms.ToolStripButton lineThicknessToolStripButton; // Renamed from penSizeToolStripButton
         private System.Windows.Forms.ToolStripButton selectToolStripButton; // Declaration
+        private System.Windows.Forms.ToolStripButton linesToolStripButton; // Declaration - New Lines Tool
     }
 }
