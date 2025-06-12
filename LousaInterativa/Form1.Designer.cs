@@ -40,6 +40,8 @@ namespace LousaInterativa
             this.toggleMenuVisibilityMenuItem = new System.Windows.Forms.ToolStripMenuItem(); // Instantiation
             this.mainToolStrip = new System.Windows.Forms.ToolStrip(); // Instantiation
             this.penToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation
+            this.penColorToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation
+            this.penSizeToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.opacityTrackBar)).BeginInit();
             this.mainToolStrip.SuspendLayout(); // For adding items
@@ -137,7 +139,9 @@ namespace LousaInterativa
             this.mainToolStrip.TabIndex = 2; // After menuStrip1 (0) and opacityTrackBar (1)
             this.mainToolStrip.Text = "mainToolStrip";
             this.mainToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.penToolStripButton});
+            this.penToolStripButton,
+            this.penColorToolStripButton,
+            this.penSizeToolStripButton});
             //
             // penToolStripButton
             //
@@ -148,6 +152,24 @@ namespace LousaInterativa
             this.penToolStripButton.Text = "Pen";
             this.penToolStripButton.CheckOnClick = true;
             this.penToolStripButton.Click += new System.EventHandler(this.penToolStripButton_Click);
+            //
+            // penColorToolStripButton
+            //
+            this.penColorToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.penColorToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.penColorToolStripButton.Name = "penColorToolStripButton";
+            this.penColorToolStripButton.Size = new System.Drawing.Size(40, 22); // Example for "Color"
+            this.penColorToolStripButton.Text = "Color";
+            this.penColorToolStripButton.Click += new System.EventHandler(this.penColorToolStripButton_Click);
+            //
+            // penSizeToolStripButton
+            //
+            this.penSizeToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.penSizeToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.penSizeToolStripButton.Name = "penSizeToolStripButton";
+            this.penSizeToolStripButton.Size = new System.Drawing.Size(34, 22); // Example for "Size"
+            this.penSizeToolStripButton.Text = "Size";
+            this.penSizeToolStripButton.Click += new System.EventHandler(this.penSizeToolStripButton_Click);
             //
             // Form1
             //
@@ -188,5 +210,7 @@ namespace LousaInterativa
         private System.Windows.Forms.ToolStripMenuItem toggleMenuVisibilityMenuItem; // Declaration
         private System.Windows.Forms.ToolStrip mainToolStrip; // Declaration
         private System.Windows.Forms.ToolStripButton penToolStripButton; // Declaration
+        private System.Windows.Forms.ToolStripButton penColorToolStripButton; // Declaration
+        private System.Windows.Forms.ToolStripButton penSizeToolStripButton; // Declaration
     }
 }

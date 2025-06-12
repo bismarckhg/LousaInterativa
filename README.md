@@ -17,6 +17,14 @@ The application features a toolbar docked at the top of the window (below the op
     *   **Button:** "Pen" (text button on the toolbar).
     *   **Functionality:** Click to activate or deactivate Pen mode. When active, the mouse cursor changes to a crosshair, indicating that drawing input is expected.
     *   *(Note: Actual drawing on the canvas is not yet implemented.)*
+*   **Pen Color Tool:**
+    *   **Button:** "Color" (text button on the toolbar, next to "Pen").
+    *   **Functionality:** Click to open a color selection dialog. The chosen color becomes the active pen color for subsequent drawing operations.
+    *   **Persistence:** The selected pen color is saved and reloaded across application sessions.
+*   **Pen Size Tool:**
+    *   **Button:** "Size" (text button on the toolbar, next to "Color").
+    *   **Functionality:** Click to open a dialog with a trackbar allowing selection of pen size from 1px to 15px. This size affects subsequent drawing operations.
+    *   **Persistence:** The selected pen size is saved and reloaded across application sessions.
 
 ## Features
 
@@ -39,6 +47,8 @@ The application features a toolbar docked at the top of the window (below the op
         -   Window transparency state (on/off for F10 mode)
         -   Form Opacity level (for F9 control)
         -   Menu Bar Visibility (shown/hidden)
+        -   **Selected Pen Color**
+        -   **Selected Pen Size**
         -   Normal window size and location
     -   Settings are stored in an XML file: `%LOCALAPPDATA%/LousaInterativaCompany/LousaInterativaApp/settings.xml`.
 

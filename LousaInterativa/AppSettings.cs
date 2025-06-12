@@ -14,6 +14,8 @@ namespace LousaInterativa
         public Point NormalFormLocation { get; set; }
         public double FormOpacity { get; set; } // New property
         public bool IsMenuVisible { get; set; } // Property for menu visibility
+        public int PenColorArgb { get; set; } // Property for Pen Color
+        public int PenSize { get; set; } // Property for Pen Size
 
         public AppSettings()
         {
@@ -26,6 +28,8 @@ namespace LousaInterativa
             NormalFormLocation = new Point(100, 100); // Default location
             FormOpacity = 1.0; // Default to 100% opaque
             IsMenuVisible = false; // Default to menu being hidden
+            PenColorArgb = System.Drawing.Color.Black.ToArgb(); // Default pen color to black
+            PenSize = 1; // Default pen size 1px
         }
     }
 }
