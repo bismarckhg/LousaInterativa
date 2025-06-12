@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace LousaInterativa
 {
@@ -17,6 +18,7 @@ namespace LousaInterativa
         public int PenColorArgb { get; set; } // Property for Pen Color
         public int PenSize { get; set; } // Property for Pen Size
         public int EraserSize { get; set; } = 10; // Default eraser size
+        public List<DrawableLine> DrawnLines { get; set; }
 
         public AppSettings()
         {
@@ -32,6 +34,7 @@ namespace LousaInterativa
             PenColorArgb = System.Drawing.Color.Black.ToArgb(); // Default pen color to black
             PenSize = 1; // Default pen size 1px
             EraserSize = 10; // Initialize default eraser size
+            DrawnLines = new List<DrawableLine>();
         }
     }
 }
