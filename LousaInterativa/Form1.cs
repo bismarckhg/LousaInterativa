@@ -1,4 +1,8 @@
+using System; // For Math.Clamp
 using System.Windows.Forms;
+using System.Drawing; // For Point, Color, etc.
+using System.Drawing.Drawing2D; // For SmoothingMode and LineCap
+using System.Collections.Generic; // For List<DrawableLine>
 
 namespace LousaInterativa
 {
@@ -21,14 +25,85 @@ namespace LousaInterativa
         private bool _isPenToolActive = false; // Field for pen tool state
         private System.Drawing.Color _currentPenColor = System.Drawing.Color.Black; // Field for current pen color
         private int _currentPenSize = 1; // Field for current pen size
+        private System.Collections.Generic.List<DrawableLine> _drawnLines = new System.Collections.Generic.List<DrawableLine>();
+        private System.Drawing.Point? _currentLineStartPoint = null;
 
         public Form1()
         {
             InitializeComponent();
+
+            // Enable double buffering for smoother drawing
+            this.DoubleBuffered = true;
+
+            // Wire up event handlers
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
+
             this.Load += Form1_Load;
             this.FormClosing += Form1_FormClosing;
             // _lastOpaqueBackColor will be initialized in Form1_Load after settings are loaded
             // _previousFormBorderStyle & _previousWindowState also initialized in Form1_Load
+        }
+
+        private void Form1_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+        {
+            // Set high quality graphics options
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+            // Draw all stored lines
+            foreach (DrawableLine line in this._drawnLines)
+            {
+                if (line == null) continue; // Basic null check
+
+                using (System.Drawing.Pen linePen = new System.Drawing.Pen(line.LineColor, line.LineWidth))
+                {
+                    linePen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+                    linePen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+                    e.Graphics.DrawLine(linePen, line.StartPoint, line.EndPoint);
+                }
+            }
+
+            // Optional: Draw a visual marker for the current line's start point if it's set
+            if (this._currentLineStartPoint != null)
+            {
+                // Example: Draw a small circle at the start point
+                // Adjust color and size as needed
+                using (System.Drawing.SolidBrush startPointBrush = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(128, this._currentPenColor))) // Semi-transparent version of pen color
+                {
+                    int markerSize = Math.Max(2, this._currentPenSize / 2 + 2); // Make marker size relative to pen size but not too small
+                    e.Graphics.FillEllipse(startPointBrush,
+                                           this._currentLineStartPoint.Value.X - markerSize / 2,
+                                           this._currentLineStartPoint.Value.Y - markerSize / 2,
+                                           markerSize, markerSize);
+                }
+            }
+        }
+
+        private void Form1_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (this._isPenToolActive && e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                if (this._currentLineStartPoint == null)
+                {
+                    // First click: define start point
+                    this._currentLineStartPoint = e.Location;
+                    this.Invalidate(); // Trigger repaint to draw the start point marker
+                }
+                else
+                {
+                    // Second click: define end point and complete the line
+                    DrawableLine newLine = new DrawableLine(
+                        this._currentLineStartPoint.Value,
+                        e.Location,
+                        this._currentPenColor,
+                        this._currentPenSize
+                    );
+                    this._drawnLines.Add(newLine);
+                    this._currentLineStartPoint = null; // Reset for the next line
+
+                    this.Invalidate(); // Trigger a repaint to draw the new line
+                }
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
