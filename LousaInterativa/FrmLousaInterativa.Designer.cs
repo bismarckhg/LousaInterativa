@@ -44,6 +44,8 @@ namespace LousaInterativa
             this.linesToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation - New Lines Tool
             this.lineColorToolStripButton = new System.Windows.Forms.ToolStripButton(); // Renamed from penColorToolStripButton
             this.lineThicknessToolStripButton = new System.Windows.Forms.ToolStripButton(); // Renamed from penSizeToolStripButton
+            this.eraserToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation - Eraser Tool
+            this.eraserSizeToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation - Eraser Size Tool
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.opacityTrackBar)).BeginInit();
             this.mainToolStrip.SuspendLayout(); // For adding items
@@ -145,7 +147,9 @@ namespace LousaInterativa
             this.penToolStripButton,
             this.linesToolStripButton, // Added new Lines Tool button
             this.lineColorToolStripButton, // Renamed from penColorToolStripButton
-            this.lineThicknessToolStripButton}); // Renamed from penSizeToolStripButton
+            this.lineThicknessToolStripButton, // Renamed from penSizeToolStripButton
+            this.eraserToolStripButton, // Added Eraser Tool button
+            this.eraserSizeToolStripButton}); // Added Eraser Size Tool button
             //
             // selectToolStripButton
             //
@@ -200,6 +204,27 @@ namespace LousaInterativa
             this.lineThicknessToolStripButton.ToolTipText = "Selecionar Espessura da Linha";
             this.lineThicknessToolStripButton.Click += new System.EventHandler(this.lineThicknessToolStripButton_Click);
             //
+            // eraserToolStripButton
+            //
+            this.eraserToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.eraserToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.eraserToolStripButton.Name = "eraserToolStripButton";
+            this.eraserToolStripButton.Size = new System.Drawing.Size(58, 22); // Adjusted for "Borracha"
+            this.eraserToolStripButton.Text = "Borracha";
+            this.eraserToolStripButton.ToolTipText = "Apagar Desenho";
+            this.eraserToolStripButton.CheckOnClick = true;
+            this.eraserToolStripButton.Click += new System.EventHandler(this.eraserToolStripButton_Click);
+            //
+            // eraserSizeToolStripButton
+            //
+            this.eraserSizeToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.eraserSizeToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.eraserSizeToolStripButton.Name = "eraserSizeToolStripButton";
+            this.eraserSizeToolStripButton.Size = new System.Drawing.Size(90, 22); // Adjusted for "Tam. Borracha"
+            this.eraserSizeToolStripButton.Text = "Tam. Borracha";
+            this.eraserSizeToolStripButton.ToolTipText = "Selecionar Tamanho da Borracha";
+            this.eraserSizeToolStripButton.Click += new System.EventHandler(this.eraserSizeToolStripButton_Click);
+            //
             // Form1
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -243,5 +268,7 @@ namespace LousaInterativa
         private System.Windows.Forms.ToolStripButton lineThicknessToolStripButton; // Renamed from penSizeToolStripButton
         private System.Windows.Forms.ToolStripButton selectToolStripButton; // Declaration
         private System.Windows.Forms.ToolStripButton linesToolStripButton; // Declaration - New Lines Tool
+        private System.Windows.Forms.ToolStripButton eraserToolStripButton; // Declaration - Eraser Tool
+        private System.Windows.Forms.ToolStripButton eraserSizeToolStripButton; // Declaration - Eraser Size Tool
     }
 }
