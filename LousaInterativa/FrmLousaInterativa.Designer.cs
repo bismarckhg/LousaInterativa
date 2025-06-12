@@ -1,6 +1,6 @@
 namespace LousaInterativa
 {
-    partial class Form1
+    partial class FrmLousaInterativa
     {
         /// <summary>
         ///  Required designer variable.

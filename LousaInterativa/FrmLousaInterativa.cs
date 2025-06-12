@@ -6,7 +6,7 @@ using System.Collections.Generic; // For List<DrawableLine>
 
 namespace LousaInterativa
 {
-    public partial class Form1 : Form
+    public partial class FrmLousaInterativa : Form
     {
         // AppSettings instance
         private AppSettings _currentSettings;
@@ -30,7 +30,7 @@ namespace LousaInterativa
         private System.Drawing.Point? _currentLineStartPoint = null;
         private DrawableLine _selectedLine = null; // Field to store the currently selected line
 
-        public Form1()
+        public FrmLousaInterativa()
         {
             InitializeComponent();
 
