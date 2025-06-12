@@ -19,6 +19,8 @@ namespace LousaInterativa
         private readonly System.Drawing.Color _magicOpaqueKeyForTransparency = System.Drawing.Color.FromArgb(255, 7, 7, 7); // An arbitrary, opaque, dark color
         private double _currentFormOpacity = 1.0; // Field for current form opacity level
         private bool _isPenToolActive = false; // Field for pen tool state
+        private System.Drawing.Color _currentPenColor = System.Drawing.Color.Black; // Field for current pen color
+        private int _currentPenSize = 1; // Field for current pen size
 
         public Form1()
         {
@@ -61,6 +63,15 @@ namespace LousaInterativa
                 this.toggleMenuVisibilityMenuItem.Checked = this.menuStrip1.Visible;
             }
 
+            // Apply Pen Color
+            if (this._currentSettings != null)
+            {
+                this._currentPenColor = System.Drawing.Color.FromArgb(this._currentSettings.PenColorArgb);
+                // Clamp pen size to be within 1 and 15 (inclusive)
+                this._currentPenSize = Math.Clamp(this._currentSettings.PenSize, 1, 15);
+            }
+
+
             // Apply states if they were active
             // Note: ToggleFullScreen() and ToggleWindowTransparency() will call SaveSettings.
             if (_currentSettings.IsFullScreen)
@@ -81,6 +92,49 @@ namespace LousaInterativa
             else if (!_isWindowTransparent) // Is opaque or full-window transparent
             {
                 this.TransparencyKey = Color.Empty;
+            }
+        }
+
+        private void penSizeToolStripButton_Click(object sender, EventArgs e)
+        {
+            // Create an instance of the PenSizeForm, passing the current pen size
+            using (PenSizeForm penSizeForm = new PenSizeForm(this._currentPenSize))
+            {
+                // Show the dialog modally
+                if (penSizeForm.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+                {
+                    // User clicked OK, update the current pen size
+                    this._currentPenSize = penSizeForm.SelectedPenSize;
+
+                    // Update and save settings
+                    if (this._currentSettings != null)
+                    {
+                        this._currentSettings.PenSize = this._currentPenSize;
+                        SettingsManager.SaveSettings(this._currentSettings);
+                    }
+                    // Optional: Update some UI element to show the new pen size, if desired.
+                }
+            }
+        }
+
+        private void penColorToolStripButton_Click(object sender, EventArgs e)
+        {
+            using (System.Windows.Forms.ColorDialog colorDialog = new System.Windows.Forms.ColorDialog())
+            {
+                colorDialog.Color = this._currentPenColor; // Set initial color in dialog
+                colorDialog.FullOpen = true; // Show custom colors section
+
+                if (colorDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+                {
+                    this._currentPenColor = colorDialog.Color;
+
+                    if (this._currentSettings != null)
+                    {
+                        this._currentSettings.PenColorArgb = this._currentPenColor.ToArgb();
+                        SettingsManager.SaveSettings(this._currentSettings);
+                    }
+                    // Optional: Update some UI element to show the new pen color, if desired.
+                }
             }
         }
 
@@ -117,6 +171,11 @@ namespace LousaInterativa
             else
             {
                 _currentSettings.IsMenuVisible = false; // Default if menuStrip1 is unexpectedly null
+            }
+            if (this._currentSettings != null)
+            {
+                this._currentSettings.PenColorArgb = this._currentPenColor.ToArgb();
+                this._currentSettings.PenSize = this._currentPenSize;
             }
 
             SettingsManager.SaveSettings(_currentSettings);
