@@ -27,10 +27,16 @@ namespace LousaInterativa
         private bool _isLinesToolActive = false; // Field for the new Lines tool state
         private System.Drawing.Color _currentPenColor = System.Drawing.Color.Black; // Field for current pen color
         private int _currentPenSize = 1; // Field for current pen size
-        private System.Collections.Generic.List<DrawableLine> _drawnLines = new System.Collections.Generic.List<DrawableLine>();
+        // private System.Collections.Generic.List<DrawableLine> _drawnLines = new System.Collections.Generic.List<DrawableLine>(); // REMOVED - Now a local var in Load, data lives in DrawingSurfaceForm
         // private System.Drawing.Point? _currentLineStartPoint = null; // REMOVED - Old pen tool's start point
         private System.Drawing.Point? _currentLineStartPointMiddleMouse = null; // For the new Lines tool
         private DrawableLine _selectedLine = null; // Field to store the currently selected line
+        private DrawingSurfaceForm _drawingSurface; // Added for DrawingSurfaceForm
+
+        // Eraser tool fields
+        private bool _isEraserToolActive = false;
+        private int _currentEraserSize = 10; // Default eraser size (adjust as needed)
+        private bool _isErasing = false; // Track if mouse is down for erasing
 
         public FrmLousaInterativa()
         {
@@ -45,8 +51,88 @@ namespace LousaInterativa
 
             this.Load += Form1_Load;
             this.FormClosing += Form1_FormClosing;
+            this.LocationChanged += new System.EventHandler(this.FrmLousaInterativa_LocationChanged); // Added
+            this.SizeChanged += new System.EventHandler(this.FrmLousaInterativa_SizeChanged); // Added
+
             // _lastOpaqueBackColor will be initialized in Form1_Load after settings are loaded
             // _previousFormBorderStyle & _previousWindowState also initialized in Form1_Load
+
+            _drawingSurface = new DrawingSurfaceForm(this);
+            _drawingSurface.Owner = this;
+
+            // Register DrawingSurface mouse events for eraser
+            _drawingSurface.MouseDown += DrawingSurface_MouseDown;
+            _drawingSurface.MouseMove += DrawingSurface_MouseMove;
+            _drawingSurface.MouseUp += DrawingSurface_MouseUp;
+        }
+
+        private void FrmLousaInterativa_LocationChanged(object sender, EventArgs e)
+        {
+            UpdateDrawingSurfaceBounds();
+        }
+
+        private void FrmLousaInterativa_SizeChanged(object sender, EventArgs e)
+        {
+            UpdateDrawingSurfaceBounds();
+        }
+
+        private void UpdateDrawingSurfaceBounds()
+        {
+            if (_drawingSurface == null) return;
+
+            Rectangle clientRectInScreenCoords = this.RectangleToScreen(this.ClientRectangle);
+
+            _drawingSurface.Bounds = clientRectInScreenCoords;
+            // _drawingSurface.BringToFront(); // Owner relationship should handle z-order with TopMost
+        }
+
+        public void HandleSurfaceMouseClick(MouseEventArgs e)
+        {
+            if (!this.Focused)
+            {
+                this.Focus();
+            }
+            if (_isEraserToolActive) return; // Simple clicks don't do anything with eraser active
+            this.Form1_MouseClick(this, e);
+        }
+
+        // Mouse event handlers for DrawingSurface events (for Eraser)
+        private void DrawingSurface_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (!this.Focused)
+            {
+                this.Focus();
+            }
+            if (_isEraserToolActive && e.Button == MouseButtons.Left)
+            {
+                _isErasing = true;
+                // e.Location is already in DrawingSurface client coordinates
+                _drawingSurface.AddEraserMark(e.Location);
+            }
+            // Forward to main MouseClick for other tools if necessary, or handle other tools' MouseDown here
+            // else if (!this.MouseButtons.HasFlag(MouseButtons.None) && !_isEraserToolActive)
+            // {
+            //     // This would simulate a click on FrmLousaInterativa for other tools
+            //     // Potentially complex if other tools also need MouseDown/Move/Up
+            //     HandleSurfaceMouseClick(e);
+            // }
+        }
+
+        private void DrawingSurface_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isEraserToolActive && _isErasing) // No need to check e.Button == MouseButtons.Left here, _isErasing covers it
+            {
+                // e.Location is already in DrawingSurface client coordinates
+                _drawingSurface.AddEraserMark(e.Location);
+            }
+        }
+
+        private void DrawingSurface_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (_isEraserToolActive && e.Button == MouseButtons.Left)
+            {
+                _isErasing = false;
+            }
         }
 
         private void Form1_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
@@ -54,18 +140,10 @@ namespace LousaInterativa
             // Set high quality graphics options
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-            // Draw all stored lines
-            foreach (DrawableLine line in this._drawnLines)
-            {
-                if (line == null) continue; // Basic null check
-
-                using (System.Drawing.Pen linePen = new System.Drawing.Pen(line.LineColor, line.LineWidth))
-                {
-                    linePen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
-                    linePen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
-                    e.Graphics.DrawLine(linePen, line.StartPoint, line.EndPoint);
-                }
-            }
+            // Line drawing is now handled by DrawingSurfaceForm.
+            // this._drawnLines might be cleared or used as a source for DrawingSurfaceForm.
+            // FrmLousaInterativa's Paint method should primarily handle its own UI elements
+            // and background, but not the dynamic drawing of lines or temporary markers.
 
             // Optional: Draw a visual marker for the current line's start point if it's set (old pen tool)
             // Only show if pen tool was somehow active and a point was set. Given pen tool is disabled, this is defensive.
@@ -84,51 +162,27 @@ namespace LousaInterativa
             // }
 
             // Visual marker for the new "Lines" tool's first point (middle mouse)
-            if (this._isLinesToolActive && this._currentLineStartPointMiddleMouse != null)
-            {
-                using (System.Drawing.SolidBrush startPointBrush = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(128, this._currentPenColor))) // Semi-transparent
-                {
-                    int markerSize = Math.Max(2, this._currentPenSize / 2 + 2);
-                    e.Graphics.FillEllipse(startPointBrush,
-                                           this._currentLineStartPointMiddleMouse.Value.X - markerSize / 2,
-                                           this._currentLineStartPointMiddleMouse.Value.Y - markerSize / 2,
-                                           markerSize, markerSize);
-                }
-            }
+            // This is now handled by DrawingSurfaceForm_Paint
+            // if (this._isLinesToolActive && this._currentLineStartPointMiddleMouse != null)
+            // {
+            //     using (System.Drawing.SolidBrush startPointBrush = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(128, this._currentPenColor))) // Semi-transparent
+            //     {
+            //         int markerSize = Math.Max(2, this._currentPenSize / 2 + 2);
+            //         e.Graphics.FillEllipse(startPointBrush,
+            //                                this._currentLineStartPointMiddleMouse.Value.X - markerSize / 2,
+            //                                this._currentLineStartPointMiddleMouse.Value.Y - markerSize / 2,
+            //                                markerSize, markerSize);
+            //     }
+            // }
 
             // Draw visual feedback for the selected line
-            if (this._selectedLine != null)
-            {
-                // Calculate the bounding box of the selected line
-                float minX = Math.Min(this._selectedLine.StartPoint.X, this._selectedLine.EndPoint.X);
-                float minY = Math.Min(this._selectedLine.StartPoint.Y, this._selectedLine.EndPoint.Y);
-                float maxX = Math.Max(this._selectedLine.StartPoint.X, this._selectedLine.EndPoint.X);
-                float maxY = Math.Max(this._selectedLine.StartPoint.Y, this._selectedLine.EndPoint.Y);
-
-                // Add padding to the bounding box
-                float padding = Math.Max(4, this._selectedLine.LineWidth / 2.0f + 2);
-
-                RectangleF bounds = new RectangleF(
-                    minX - padding,
-                    minY - padding,
-                    (maxX - minX) + (2 * padding),
-                    (maxY - minY) + (2 * padding)
-                );
-
-                // Use a semi-transparent brush for the selection rectangle
-                using (System.Drawing.SolidBrush selectionBrush = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(80, 0, 100, 255))) // Semi-transparent blue
-                {
-                    e.Graphics.FillRectangle(selectionBrush, bounds);
-                }
-
-                // Optional: Draw small handles (commented out as per plan)
-                // int handleSize = 6;
-                // using (System.Drawing.SolidBrush handleBrush = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(150, 0, 0, 200)))
-                // {
-                //     e.Graphics.FillRectangle(handleBrush, _selectedLine.StartPoint.X - handleSize / 2, _selectedLine.StartPoint.Y - handleSize / 2, handleSize, handleSize);
-                //     e.Graphics.FillRectangle(handleBrush, _selectedLine.EndPoint.X - handleSize / 2, _selectedLine.EndPoint.Y - handleSize / 2, handleSize, handleSize);
-                // }
-            }
+            // TODO: Selection logic might need to interact with _drawingSurface lines.
+            // For now, if _selectedLine is from _drawnLines (which is now on _drawingSurface), this won't work directly
+            // without fetching lines from _drawingSurface or making _selectedLine refer to a line from _drawingSurface.
+            // This part needs careful review in a subsequent step if selection is to work with DrawingSurfaceForm.
+            // Selection feedback is now exclusively drawn by DrawingSurfaceForm.
+            // FrmLousaInterativa's Paint method is now only responsible for its own background and UI elements,
+            // not for any of the dynamic drawing content (lines, selections, markers).
         }
 
         private void Form1_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -145,43 +199,60 @@ namespace LousaInterativa
                 // New logic for select tool
                 bool lineHit = false;
                 // Iterate in reverse order to select the topmost line if lines overlap
-                for (int i = this._drawnLines.Count - 1; i >= 0; i--)
+                if (_drawingSurface != null)
                 {
-                    DrawableLine currentLine = this._drawnLines[i];
-                    if (IsPointNearLine(e.Location, currentLine)) // Using the helper method
+                    var linesToSearch = _drawingSurface.GetLines(); // Get lines from DrawingSurface
+                    for (int i = linesToSearch.Count - 1; i >= 0; i--)
                     {
-                        this._selectedLine = currentLine;
-                        lineHit = true;
-                        break; // Select only one line (the topmost one hit)
+                        DrawableLine currentLine = linesToSearch[i];
+                        if (IsPointNearLine(e.Location, currentLine))
+                        {
+                            this._selectedLine = currentLine;
+                            _drawingSurface.SelectedLine = this._selectedLine; // Inform DrawingSurface
+                            lineHit = true;
+                            break;
+                        }
                     }
                 }
 
                 if (!lineHit)
                 {
-                    this._selectedLine = null; // Clicked on empty space, deselect
+                    this._selectedLine = null;
+                    if (_drawingSurface != null) _drawingSurface.SelectedLine = null;
                 }
-
-                this.Invalidate(); // Trigger a repaint to show/hide selection feedback
+                _drawingSurface?.Invalidate(); // Ensure DrawingSurface redraws for selection feedback
             }
             else if (this._isLinesToolActive && e.Button == System.Windows.Forms.MouseButtons.Middle)
             {
+                 // The owner form's e.Location is already in its own client coordinates.
+                 // These are the coordinates that should be used for drawing on the surface.
                 if (this._currentLineStartPointMiddleMouse == null)
                 {
-                    this._currentLineStartPointMiddleMouse = e.Location;
-                    // Optional: Add visual feedback for the first point if desired, then Invalidate()
-                    this.Invalidate(); // To draw the start point marker if implemented in Form1_Paint
+                    this._currentLineStartPointMiddleMouse = e.Location; // Stored in FrmLousaInterativa client coordinates
+                    if (_drawingSurface != null)
+                    {
+                        // Pass the same client coordinates to DrawingSurfaceForm
+                        _drawingSurface.CurrentLineStartPoint = e.Location;
+                        _drawingSurface.CurrentLineColor = _currentPenColor;
+                        _drawingSurface.CurrentLineWidth = _currentPenSize;
+                        _drawingSurface.Invalidate();
+                    }
                 }
                 else
                 {
                     DrawableLine newLine = new DrawableLine(
-                        this._currentLineStartPointMiddleMouse.Value,
-                        e.Location,
-                        this._currentPenColor, // Use existing pen color for now
-                        this._currentPenSize   // Use existing pen size for now
+                        this._currentLineStartPointMiddleMouse.Value, // Start point in FrmLousaInterativa client coordinates
+                        e.Location, // End point in FrmLousaInterativa client coordinates
+                        this._currentPenColor,
+                        this._currentPenSize
                     );
-                    this._drawnLines.Add(newLine);
-                    this._currentLineStartPointMiddleMouse = null; // Reset for the next line
-                    this.Invalidate(); // Trigger a repaint
+                    _drawingSurface?.AddLine(newLine); // Add to surface
+                    this._currentLineStartPointMiddleMouse = null;
+                    if(_drawingSurface != null)
+                    {
+                        _drawingSurface.CurrentLineStartPoint = null;
+                        // AddLine already invalidates _drawingSurface
+                    }
                 }
             }
         }
@@ -224,6 +295,8 @@ namespace LousaInterativa
                 this._currentPenColor = System.Drawing.Color.FromArgb(this._currentSettings.PenColorArgb);
                 // Clamp pen size to be within 1 and 15 (inclusive)
                 this._currentPenSize = Math.Clamp(this._currentSettings.PenSize, 1, 15);
+                // Load and clamp eraser size
+                _currentEraserSize = Math.Clamp(_currentSettings.EraserSize, 1, 10);
             }
 
 
@@ -255,7 +328,89 @@ namespace LousaInterativa
             {
                 this.penToolStripButton.Checked = false;
             }
+
+            // Sincronizar inicialmente e mostrar a superfície de desenho
+            UpdateDrawingSurfaceBounds();
+            if (_drawingSurface != null)
+            {
+                // Pass initial properties from FrmLousaInterativa to DrawingSurfaceForm
+                _drawingSurface.CurrentLineColor = this._currentPenColor;
+                _drawingSurface.CurrentLineWidth = this._currentPenSize;
+                _drawingSurface.EraserSize = _currentEraserSize;
+                _drawingSurface.CurrentLineStartPoint = this._currentLineStartPointMiddleMouse;
+                _drawingSurface.IsLinesToolActive = this._isLinesToolActive;
+                _drawingSurface.IsEraserActive = this._isEraserToolActive;
+                _drawingSurface.SelectedLine = this._selectedLine;
+
+
+                _drawingSurface.Show();
+
+                // Load lines from settings and pass them to the drawing surface
+                List<DrawableLine> loadedLines = _currentSettings.DrawnLines ?? new List<DrawableLine>();
+                _drawingSurface.SetLines(loadedLines);
+
+                // FrmLousaInterativa._drawnLines is no longer the primary store.
+                this.Invalidate(); // FrmLousaInterativa no longer draws lines directly.
+            }
         }
+
+        // Helper method to deactivate all tools and clear shared states.
+        // The button that was just clicked (and whose Checked state is now true due to CheckOnClick)
+        // is passed as 'activatedButton' to avoid unchecking it.
+        private void DeactivateAllTools(ToolStripButton activeButton = null)
+        {
+            // Store current states from buttons if they are the active one
+            bool isLinesNowActive = (activeButton == linesToolStripButton && linesToolStripButton.Checked);
+            bool isSelectNowActive = (activeButton == selectToolStripButton && selectToolStripButton.Checked);
+            bool isEraserNowActive = (activeButton == eraserToolStripButton && eraserToolStripButton.Checked);
+
+            // Uncheck all other buttons
+            if (linesToolStripButton != activeButton && linesToolStripButton != null) linesToolStripButton.Checked = false;
+            if (selectToolStripButton != activeButton && selectToolStripButton != null) selectToolStripButton.Checked = false;
+            if (eraserToolStripButton != activeButton && eraserToolStripButton != null) eraserToolStripButton.Checked = false;
+            if (penToolStripButton != null) penToolStripButton.Checked = false; // Old pen tool, always ensure it's off
+
+            // Update internal state flags
+            _isLinesToolActive = isLinesNowActive;
+            _isSelectToolActive = isSelectNowActive;
+            _isEraserToolActive = isEraserNowActive;
+            _isPenToolActive = false; // Always false
+
+            // Update DrawingSurface states
+            if (_drawingSurface != null)
+            {
+                _drawingSurface.IsLinesToolActive = _isLinesToolActive;
+                _drawingSurface.IsEraserActive = _isEraserToolActive;
+                // If select tool is not active, clear selection on drawing surface
+                if (!_isSelectToolActive)
+                {
+                    _drawingSurface.SelectedLine = null;
+                }
+                // If lines tool is not active, clear its pending start point on drawing surface
+                if (!_isLinesToolActive)
+                {
+                    _drawingSurface.CurrentLineStartPoint = null;
+                }
+            }
+
+            // Clear FrmLousaInterativa's tracking of selected line if select tool is not the active one
+            if (!_isSelectToolActive)
+            {
+                _selectedLine = null;
+            }
+            // Clear FrmLousaInterativa's tracking of line start point if lines tool is not the active one
+            if (!_isLinesToolActive)
+            {
+                _currentLineStartPointMiddleMouse = null;
+            }
+
+            // Reset cursor - the active tool's handler will set it appropriately.
+            this.Cursor = Cursors.Default;
+
+            // Request redraw of drawing surface to reflect any changes (e.g., selection highlight, start point marker)
+            _drawingSurface?.Invalidate();
+        }
+
 
         private void lineThicknessToolStripButton_Click(object sender, EventArgs e) // Renamed from penSizeToolStripButton_Click
         {
@@ -273,6 +428,11 @@ namespace LousaInterativa
                     {
                         this._currentSettings.PenSize = this._currentPenSize;
                         SettingsManager.SaveSettings(this._currentSettings);
+                    }
+                    if (_drawingSurface != null)
+                    {
+                        _drawingSurface.CurrentLineWidth = this._currentPenSize;
+                        _drawingSurface.Invalidate(); // Ensure marker preview updates if visible
                     }
                     // Optional: Update some UI element to show the new pen size, if desired.
                 }
@@ -295,6 +455,11 @@ namespace LousaInterativa
                         this._currentSettings.PenColorArgb = this._currentPenColor.ToArgb();
                         SettingsManager.SaveSettings(this._currentSettings);
                     }
+                     if (_drawingSurface != null)
+                     {
+                        _drawingSurface.CurrentLineColor = this._currentPenColor;
+                        _drawingSurface.Invalidate(); // Ensure marker preview updates if visible
+                     }
                     // Optional: Update some UI element to show the new pen color, if desired.
                 }
             }
@@ -336,8 +501,19 @@ namespace LousaInterativa
             }
             if (this._currentSettings != null)
             {
+                if (_drawingSurface != null)
+                {
+                    _currentSettings.DrawnLines = new List<DrawableLine>(_drawingSurface.GetLines());
+                }
+                else
+                {
+                    // Fallback if drawingSurface is somehow null - save an empty list or previously loaded state if it existed.
+                    // Since _drawnLines is cleared, this path should ideally not be hit if _drawingSurface is always available.
+                    _currentSettings.DrawnLines = new List<DrawableLine>();
+                }
                 this._currentSettings.PenColorArgb = this._currentPenColor.ToArgb();
                 this._currentSettings.PenSize = this._currentPenSize;
+                _currentSettings.EraserSize = _currentEraserSize; // Save eraser size
             }
 
             SettingsManager.SaveSettings(_currentSettings);
@@ -457,6 +633,27 @@ namespace LousaInterativa
             }
         }
 
+        private void eraserSizeToolStripButton_Click(object sender, EventArgs e)
+        {
+            using (EraserSizeForm eraserSizeForm = new EraserSizeForm(_currentEraserSize))
+            {
+                if (eraserSizeForm.ShowDialog(this) == DialogResult.OK)
+                {
+                    _currentEraserSize = eraserSizeForm.SelectedEraserSize;
+                    if (_drawingSurface != null)
+                    {
+                        _drawingSurface.EraserSize = _currentEraserSize;
+                    }
+                    // Save settings immediately for consistency
+                    if (_currentSettings != null)
+                    {
+                        _currentSettings.EraserSize = _currentEraserSize;
+                        SettingsManager.SaveSettings(_currentSettings);
+                    }
+                }
+            }
+        }
+
         private void toggleMenuVisibilityMenuItem_Click(object sender, EventArgs e)
         {
             ToggleMenuVisibility();
@@ -566,39 +763,53 @@ namespace LousaInterativa
                 if (this._currentLineStartPointMiddleMouse != null)
                 {
                     this._currentLineStartPointMiddleMouse = null;
-                    this.Invalidate();
+                    // this.Invalidate(); // FrmLousaInterativa no longer draws this marker
+                }
+                if (_drawingSurface != null)
+                {
+                    _drawingSurface.CurrentLineStartPoint = null;
+                    _drawingSurface.Invalidate(); // Clear marker on surface
                 }
             }
-            // If select tool is unchecked, another tool's click handler will manage cursor and active state.
-            // If no other tool becomes active, cursor remains Default.
+            // If select tool is unchecked (meaning it was just deactivated by the user clicking it again)
+            // or if another tool was activated (which DeactivateAllTools would have handled by unchecking this one),
+            // ensure selection state is cleared.
+            if (!selectToolStripButton.Checked)
+            {
+                 _selectedLine = null;
+                 if (_drawingSurface != null) _drawingSurface.SelectedLine = null;
+            }
+            // DeactivateAllTools has already handled unchecking other buttons and updating most state.
+            // The primary role here is to set the correct cursor if this tool IS active.
+            if (_isSelectToolActive)
+            {
+                 this.Cursor = Cursors.Default;
+            }
+             _drawingSurface?.Invalidate(); // Ensure selection visual is updated
         }
 
         private void linesToolStripButton_Click(object sender, EventArgs e)
         {
-            _isLinesToolActive = this.linesToolStripButton.Checked;
+            // The CheckOnClick property automatically toggles linesToolStripButton.Checked.
+            // DeactivateAllTools will use this new Checked state to determine _isLinesToolActive.
+            DeactivateAllTools(linesToolStripButton);
 
             if (_isLinesToolActive)
             {
                 this.Cursor = System.Windows.Forms.Cursors.Cross;
-                // Deactivate other tools
-                if (this.selectToolStripButton != null)
-                {
-                    this.selectToolStripButton.Checked = false;
-                    _isSelectToolActive = false;
-                }
-                // Ensure the old pen tool (if its logic wasn't fully removed) is also deactivated
-                if (this.penToolStripButton != null) // penToolStripButton might still exist but be invisible
-                {
-                    this.penToolStripButton.Checked = false;
-                    _isPenToolActive = false;
-                }
-                 _currentLineStartPointMiddleMouse = null; // Reset any pending line from this tool
+                // _currentLineStartPointMiddleMouse and _drawingSurface.CurrentLineStartPoint are reset by DeactivateAllTools
+                // if this tool was not the one activated. If it was activated, they remain as they were (e.g. null).
             }
-            else
+        }
+
+        private void eraserToolStripButton_Click(object sender, EventArgs e)
+        {
+            DeactivateAllTools(eraserToolStripButton);
+
+            if (_isEraserToolActive)
             {
-                this.Cursor = System.Windows.Forms.Cursors.Default;
-                _currentLineStartPointMiddleMouse = null; // Cancel pending line if Lines tool is deselected
-                this.Invalidate(); // Redraw to clear any visual marker if one was added for middle mouse
+                this.Cursor = Cursors.Default; // Or a custom eraser cursor
+                if (_drawingSurface != null) _drawingSurface.EraserSize = _currentEraserSize;
             }
         }
 
@@ -632,6 +843,17 @@ namespace LousaInterativa
             {
                 ToggleMenuVisibility();
                 e.Handled = true; // Mark the event as handled
+            }
+            else if (e.KeyCode == Keys.Delete && _isSelectToolActive && _selectedLine != null && _drawingSurface != null)
+            {
+                bool removed = _drawingSurface.RemoveLine(_selectedLine);
+                if (removed)
+                {
+                    _selectedLine = null;
+                    // _drawingSurface.SelectedLine is already set to null by RemoveLine if it was the selected one
+                    // _drawingSurface.Invalidate() is called by RemoveLine.
+                }
+                e.Handled = true;
             }
         }
 

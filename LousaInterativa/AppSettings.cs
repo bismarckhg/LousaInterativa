@@ -16,6 +16,7 @@ namespace LousaInterativa
         public bool IsMenuVisible { get; set; } // Property for menu visibility
         public int PenColorArgb { get; set; } // Property for Pen Color
         public int PenSize { get; set; } // Property for Pen Size
+        public int EraserSize { get; set; } = 10; // Default eraser size
 
         public AppSettings()
         {
@@ -30,6 +31,7 @@ namespace LousaInterativa
             IsMenuVisible = false; // Default to menu being hidden
             PenColorArgb = System.Drawing.Color.Black.ToArgb(); // Default pen color to black
             PenSize = 1; // Default pen size 1px
+            EraserSize = 10; // Initialize default eraser size
         }
     }
 }
