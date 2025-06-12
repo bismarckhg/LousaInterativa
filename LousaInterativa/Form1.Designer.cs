@@ -39,6 +39,7 @@ namespace LousaInterativa
             this.adjustOpacityMenuItem = new System.Windows.Forms.ToolStripMenuItem(); // Instantiation
             this.toggleMenuVisibilityMenuItem = new System.Windows.Forms.ToolStripMenuItem(); // Instantiation
             this.mainToolStrip = new System.Windows.Forms.ToolStrip(); // Instantiation
+            this.selectToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation
             this.penToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation
             this.penColorToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation
             this.penSizeToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation
@@ -139,9 +140,20 @@ namespace LousaInterativa
             this.mainToolStrip.TabIndex = 2; // After menuStrip1 (0) and opacityTrackBar (1)
             this.mainToolStrip.Text = "mainToolStrip";
             this.mainToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectToolStripButton,
             this.penToolStripButton,
             this.penColorToolStripButton,
             this.penSizeToolStripButton});
+            //
+            // selectToolStripButton
+            //
+            this.selectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.selectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.selectToolStripButton.Name = "selectToolStripButton";
+            this.selectToolStripButton.Size = new System.Drawing.Size(45, 22); // Example for "Select"
+            this.selectToolStripButton.Text = "Select";
+            this.selectToolStripButton.CheckOnClick = true;
+            this.selectToolStripButton.Click += new System.EventHandler(this.selectToolStripButton_Click);
             //
             // penToolStripButton
             //
@@ -212,5 +224,6 @@ namespace LousaInterativa
         private System.Windows.Forms.ToolStripButton penToolStripButton; // Declaration
         private System.Windows.Forms.ToolStripButton penColorToolStripButton; // Declaration
         private System.Windows.Forms.ToolStripButton penSizeToolStripButton; // Declaration
+        private System.Windows.Forms.ToolStripButton selectToolStripButton; // Declaration
     }
 }

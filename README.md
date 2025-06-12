@@ -13,6 +13,16 @@ Lousa Interativa (Interactive Whiteboard) is a simple Windows Forms application 
 The application features a toolbar docked at the top of the window (below the opacity adjustment trackbar, if visible) for quick access to drawing tools and other commands.
 
 ### Drawing Tools
+*   **Select Tool:**
+    *   **Button:** "Select" (text button on the toolbar).
+    *   **Functionality:**
+        *   Click to activate/deactivate Select mode. When active, the mouse cursor changes to the default arrow.
+        *   This tool is mutually exclusive with the Pen tool (activating one deactivates the other).
+        *   **To Select a Line:**
+            1.  Activate the Select tool.
+            2.  Click near a drawn line on the whiteboard.
+        *   **Visual Feedback:** If a line is successfully selected, a semi-transparent blue rectangle will be drawn around it as a bounding box. Clicking on an empty area of the whiteboard will deselect any currently selected line.
+    *   *(Note: Moving or modifying selected lines is planned for future updates.)*
 *   **Pen Tool:**
     *   **Button:** "Pen" (text button on the toolbar).
     *   **Functionality:**

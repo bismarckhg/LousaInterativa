@@ -23,10 +23,12 @@ namespace LousaInterativa
         private readonly System.Drawing.Color _magicOpaqueKeyForTransparency = System.Drawing.Color.FromArgb(255, 7, 7, 7); // An arbitrary, opaque, dark color
         private double _currentFormOpacity = 1.0; // Field for current form opacity level
         private bool _isPenToolActive = false; // Field for pen tool state
+        private bool _isSelectToolActive = false; // Field for select tool state
         private System.Drawing.Color _currentPenColor = System.Drawing.Color.Black; // Field for current pen color
         private int _currentPenSize = 1; // Field for current pen size
         private System.Collections.Generic.List<DrawableLine> _drawnLines = new System.Collections.Generic.List<DrawableLine>();
         private System.Drawing.Point? _currentLineStartPoint = null;
+        private DrawableLine _selectedLine = null; // Field to store the currently selected line
 
         public Form1()
         {
@@ -77,12 +79,47 @@ namespace LousaInterativa
                                            markerSize, markerSize);
                 }
             }
+
+            // Draw visual feedback for the selected line
+            if (this._selectedLine != null)
+            {
+                // Calculate the bounding box of the selected line
+                float minX = Math.Min(this._selectedLine.StartPoint.X, this._selectedLine.EndPoint.X);
+                float minY = Math.Min(this._selectedLine.StartPoint.Y, this._selectedLine.EndPoint.Y);
+                float maxX = Math.Max(this._selectedLine.StartPoint.X, this._selectedLine.EndPoint.X);
+                float maxY = Math.Max(this._selectedLine.StartPoint.Y, this._selectedLine.EndPoint.Y);
+
+                // Add padding to the bounding box
+                float padding = Math.Max(4, this._selectedLine.LineWidth / 2.0f + 2);
+
+                RectangleF bounds = new RectangleF(
+                    minX - padding,
+                    minY - padding,
+                    (maxX - minX) + (2 * padding),
+                    (maxY - minY) + (2 * padding)
+                );
+
+                // Use a semi-transparent brush for the selection rectangle
+                using (System.Drawing.SolidBrush selectionBrush = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(80, 0, 100, 255))) // Semi-transparent blue
+                {
+                    e.Graphics.FillRectangle(selectionBrush, bounds);
+                }
+
+                // Optional: Draw small handles (commented out as per plan)
+                // int handleSize = 6;
+                // using (System.Drawing.SolidBrush handleBrush = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(150, 0, 0, 200)))
+                // {
+                //     e.Graphics.FillRectangle(handleBrush, _selectedLine.StartPoint.X - handleSize / 2, _selectedLine.StartPoint.Y - handleSize / 2, handleSize, handleSize);
+                //     e.Graphics.FillRectangle(handleBrush, _selectedLine.EndPoint.X - handleSize / 2, _selectedLine.EndPoint.Y - handleSize / 2, handleSize, handleSize);
+                // }
+            }
         }
 
         private void Form1_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             if (this._isPenToolActive && e.Button == System.Windows.Forms.MouseButtons.Left)
             {
+                // Existing pen tool logic for drawing lines
                 if (this._currentLineStartPoint == null)
                 {
                     // First click: define start point
@@ -103,6 +140,29 @@ namespace LousaInterativa
 
                     this.Invalidate(); // Trigger a repaint to draw the new line
                 }
+            }
+            else if (this._isSelectToolActive && e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                // New logic for select tool
+                bool lineHit = false;
+                // Iterate in reverse order to select the topmost line if lines overlap
+                for (int i = this._drawnLines.Count - 1; i >= 0; i--)
+                {
+                    DrawableLine currentLine = this._drawnLines[i];
+                    if (IsPointNearLine(e.Location, currentLine)) // Using the helper method
+                    {
+                        this._selectedLine = currentLine;
+                        lineHit = true;
+                        break; // Select only one line (the topmost one hit)
+                    }
+                }
+
+                if (!lineHit)
+                {
+                    this._selectedLine = null; // Clicked on empty space, deselect
+                }
+
+                this.Invalidate(); // Trigger a repaint to show/hide selection feedback
             }
         }
 
@@ -442,15 +502,44 @@ namespace LousaInterativa
 
             if (this._isPenToolActive)
             {
-                this.Cursor = System.Windows.Forms.Cursors.Cross; // Use Crosshair cursor as placeholder for pen
-
-                // Future: If other tools exist, ensure they are unchecked.
-                // Example: if (this.eraserToolStripButton != null) this.eraserToolStripButton.Checked = false;
+                this.Cursor = System.Windows.Forms.Cursors.Cross; // Use Crosshair cursor for pen
+                if (this.selectToolStripButton != null)
+                {
+                    this.selectToolStripButton.Checked = false;
+                }
+                this._isSelectToolActive = false; // Ensure select tool is deactivated
+                // _currentLineStartPoint is managed by drawing logic when pen is active
             }
-            else
+            else // Pen tool deactivated
             {
                 this.Cursor = System.Windows.Forms.Cursors.Default;
+                this._currentLineStartPoint = null; // Cancel pending line if pen tool is deselected
+                this.Invalidate(); // Redraw to clear start point marker
             }
+        }
+
+        private void selectToolStripButton_Click(object sender, EventArgs e)
+        {
+            this._isSelectToolActive = this.selectToolStripButton.Checked;
+
+            if (this._isSelectToolActive)
+            {
+                this.Cursor = System.Windows.Forms.Cursors.Default; // Default cursor for select tool
+                if (this.penToolStripButton != null)
+                {
+                    this.penToolStripButton.Checked = false;
+                }
+                this._isPenToolActive = false; // Ensure pen tool is deactivated
+
+                // Cancel any pending line drawing from the pen tool
+                if (this._currentLineStartPoint != null)
+                {
+                    this._currentLineStartPoint = null;
+                    this.Invalidate(); // Redraw to clear any start point marker
+                }
+            }
+            // If select tool is unchecked, another tool's click handler will manage cursor and active state.
+            // If no other tool becomes active, cursor remains Default.
         }
 
         private void fullScreenMenuItem_Click(object sender, System.EventArgs e)
@@ -494,6 +583,50 @@ namespace LousaInterativa
                 // Update TrackBar's value to reflect current form opacity when it becomes visible
                 this.opacityTrackBar.Value = (int)(this._currentFormOpacity * 100);
             }
+        }
+
+        private bool IsPointNearLine(Point point, DrawableLine line, int tolerance = 5)
+        {
+            if (line == null) return false;
+
+            Point p1 = line.StartPoint;
+            Point p2 = line.EndPoint;
+            Point p = point;
+
+            float dx = p2.X - p1.X;
+            float dy = p2.Y - p1.Y;
+
+            if (dx == 0 && dy == 0) // Line is actually a point
+            {
+                // Distance from p to p1 (or p2)
+                float distToPoint = (float)Math.Sqrt(Math.Pow(p.X - p1.X, 2) + Math.Pow(p.Y - p1.Y, 2));
+                return distToPoint <= tolerance + (line.LineWidth / 2.0f);
+            }
+
+            // Calculate the t parameter for the projection of point p onto the line defined by p1 and p2
+            // t = [(p - p1) . (p2 - p1)] / |p2 - p1|^2
+            float t = ((p.X - p1.X) * dx + (p.Y - p1.Y) * dy) / (dx * dx + dy * dy);
+
+            Point closestPoint;
+            if (t < 0)
+            {
+                closestPoint = p1; // Closest point is p1
+            }
+            else if (t > 1)
+            {
+                closestPoint = p2; // Closest point is p2
+            }
+            else
+            {
+                // Projection falls on the line segment
+                closestPoint = new Point((int)(p1.X + t * dx), (int)(p1.Y + t * dy));
+            }
+
+            // Calculate distance from p to closestPoint
+            float distance = (float)Math.Sqrt(Math.Pow(p.X - closestPoint.X, 2) + Math.Pow(p.Y - closestPoint.Y, 2));
+
+            // Consider line width in tolerance
+            return distance <= tolerance + (line.LineWidth / 2.0f);
         }
 
         private void toggleTransparencyMenuItem_Click(object sender, EventArgs e)
