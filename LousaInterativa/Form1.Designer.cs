@@ -34,13 +34,26 @@ namespace LousaInterativa
             this.fullScreenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.changeBackgroundColorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toggleTransparencyMenuItem = new System.Windows.Forms.ToolStripMenuItem(); // Instantiation
+            this.opacityTrackBar = new System.Windows.Forms.TrackBar();
+            this.adjustOpacityMenuItem = new System.Windows.Forms.ToolStripMenuItem(); // Instantiation
+            this.toggleMenuVisibilityMenuItem = new System.Windows.Forms.ToolStripMenuItem(); // Instantiation
+            this.mainToolStrip = new System.Windows.Forms.ToolStrip(); // Instantiation
+            this.selectToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation
+            this.penToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation
+            this.penColorToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation
+            this.penSizeToolStripButton = new System.Windows.Forms.ToolStripButton(); // Instantiation
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.opacityTrackBar)).BeginInit();
+            this.mainToolStrip.SuspendLayout(); // For adding items
             this.SuspendLayout();
             //
             // viewMenu
             //
             this.viewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fullScreenMenuItem});
+            this.fullScreenMenuItem,
+            this.toggleTransparencyMenuItem,
+            this.toggleMenuVisibilityMenuItem}); // Added here
             this.viewMenu.Name = "viewMenu";
             this.viewMenu.Size = new System.Drawing.Size(44, 20);
             this.viewMenu.Text = "View";
@@ -53,10 +66,26 @@ namespace LousaInterativa
             this.fullScreenMenuItem.Text = "Full Screen";
             this.fullScreenMenuItem.Click += new System.EventHandler(this.fullScreenMenuItem_Click);
             //
+            // toggleTransparencyMenuItem
+            //
+            this.toggleTransparencyMenuItem.Name = "toggleTransparencyMenuItem";
+            this.toggleTransparencyMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F10;
+            this.toggleTransparencyMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.toggleTransparencyMenuItem.Text = "&Toggle Transparency";
+            this.toggleTransparencyMenuItem.Click += new System.EventHandler(this.toggleTransparencyMenuItem_Click);
+            //
+            // toggleMenuVisibilityMenuItem
+            //
+            this.toggleMenuVisibilityMenuItem.Name = "toggleMenuVisibilityMenuItem";
+            this.toggleMenuVisibilityMenuItem.Size = new System.Drawing.Size(180, 22); // Consistent with others in View
+            this.toggleMenuVisibilityMenuItem.Text = "Show/Hide &Menu";
+            this.toggleMenuVisibilityMenuItem.Click += new System.EventHandler(this.toggleMenuVisibilityMenuItem_Click);
+            //
             // toolsMenu
             //
             this.toolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.changeBackgroundColorMenuItem});
+            this.changeBackgroundColorMenuItem,
+            this.adjustOpacityMenuItem}); // Added here
             this.toolsMenu.Name = "toolsMenu";
             this.toolsMenu.Size = new System.Drawing.Size(46, 20);
             this.toolsMenu.Text = "Tools";
@@ -64,9 +93,17 @@ namespace LousaInterativa
             // changeBackgroundColorMenuItem
             //
             this.changeBackgroundColorMenuItem.Name = "changeBackgroundColorMenuItem";
-            this.changeBackgroundColorMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.changeBackgroundColorMenuItem.Size = new System.Drawing.Size(200, 22); // Keep consistent if possible
             this.changeBackgroundColorMenuItem.Text = "Change Background Color";
             this.changeBackgroundColorMenuItem.Click += new System.EventHandler(this.changeBackgroundColorMenuItem_Click);
+            //
+            // adjustOpacityMenuItem
+            //
+            this.adjustOpacityMenuItem.Name = "adjustOpacityMenuItem";
+            this.adjustOpacityMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F9;
+            this.adjustOpacityMenuItem.Size = new System.Drawing.Size(200, 22); // Consistent size
+            this.adjustOpacityMenuItem.Text = "&Adjust Opacity";
+            this.adjustOpacityMenuItem.Click += new System.EventHandler(this.adjustOpacityMenuItem_Click);
             //
             // menuStrip1
             //
@@ -78,13 +115,85 @@ namespace LousaInterativa
             this.menuStrip1.Size = new System.Drawing.Size(800, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip1.Visible = false; // Make menuStrip1 invisible by default
+            //
+            // opacityTrackBar
+            //
+            this.opacityTrackBar.Dock = System.Windows.Forms.DockStyle.Top;
+            this.opacityTrackBar.Location = new System.Drawing.Point(0, 24); // Location is illustrative, Dock takes precedence
+            this.opacityTrackBar.Maximum = 100;
+            this.opacityTrackBar.Name = "opacityTrackBar";
+            this.opacityTrackBar.Size = new System.Drawing.Size(800, 45);    // Size is illustrative, Dock takes precedence for width
+            this.opacityTrackBar.TabIndex = 1;
+            this.opacityTrackBar.TickFrequency = 10;
+            this.opacityTrackBar.Value = 100; // Default to 100% opaque
+            this.opacityTrackBar.Visible = false; // Initially hidden
+            this.opacityTrackBar.Scroll += new System.EventHandler(this.opacityTrackBar_Scroll);
+            //
+            // mainToolStrip
+            //
+            this.mainToolStrip.Dock = System.Windows.Forms.DockStyle.Top;
+            this.mainToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.mainToolStrip.Location = new System.Drawing.Point(0, 0); // Actual Y will be below opacityTrackBar
+            this.mainToolStrip.Name = "mainToolStrip";
+            this.mainToolStrip.Size = new System.Drawing.Size(800, 25); // Height 25, width will be auto
+            this.mainToolStrip.TabIndex = 2; // After menuStrip1 (0) and opacityTrackBar (1)
+            this.mainToolStrip.Text = "mainToolStrip";
+            this.mainToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectToolStripButton,
+            this.penToolStripButton,
+            this.penColorToolStripButton,
+            this.penSizeToolStripButton});
+            //
+            // selectToolStripButton
+            //
+            this.selectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.selectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.selectToolStripButton.Name = "selectToolStripButton";
+            this.selectToolStripButton.Size = new System.Drawing.Size(45, 22); // Example for "Select"
+            this.selectToolStripButton.Text = "Select";
+            this.selectToolStripButton.CheckOnClick = true;
+            this.selectToolStripButton.Click += new System.EventHandler(this.selectToolStripButton_Click);
+            //
+            // penToolStripButton
+            //
+            this.penToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.penToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.penToolStripButton.Name = "penToolStripButton";
+            this.penToolStripButton.Size = new System.Drawing.Size(34, 22); // Example text-based size
+            this.penToolStripButton.Text = "Pen";
+            this.penToolStripButton.CheckOnClick = true;
+            this.penToolStripButton.Click += new System.EventHandler(this.penToolStripButton_Click);
+            //
+            // penColorToolStripButton
+            //
+            this.penColorToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.penColorToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.penColorToolStripButton.Name = "penColorToolStripButton";
+            this.penColorToolStripButton.Size = new System.Drawing.Size(40, 22); // Example for "Color"
+            this.penColorToolStripButton.Text = "Color";
+            this.penColorToolStripButton.Click += new System.EventHandler(this.penColorToolStripButton_Click);
+            //
+            // penSizeToolStripButton
+            //
+            this.penSizeToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.penSizeToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.penSizeToolStripButton.Name = "penSizeToolStripButton";
+            this.penSizeToolStripButton.Size = new System.Drawing.Size(34, 22); // Example for "Size"
+            this.penSizeToolStripButton.Text = "Size";
+            this.penSizeToolStripButton.Click += new System.EventHandler(this.penSizeToolStripButton_Click);
             //
             // Form1
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            // Corrected order for DockStyle.Top: Last added is lowest.
+            // To have opacityTrackBar at the top, then mainToolStrip, then menuStrip1 (if visible):
+            // Add menuStrip1 first, then mainToolStrip, then opacityTrackBar.
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.mainToolStrip);
+            this.Controls.Add(this.opacityTrackBar);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
@@ -92,6 +201,9 @@ namespace LousaInterativa
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.opacityTrackBar)).EndInit();
+            this.mainToolStrip.ResumeLayout(false);
+            this.mainToolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -104,5 +216,14 @@ namespace LousaInterativa
         private System.Windows.Forms.ToolStripMenuItem fullScreenMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolsMenu;
         private System.Windows.Forms.ToolStripMenuItem changeBackgroundColorMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toggleTransparencyMenuItem; // Declaration
+        private System.Windows.Forms.TrackBar opacityTrackBar; // Declaration
+        private System.Windows.Forms.ToolStripMenuItem adjustOpacityMenuItem; // Declaration
+        private System.Windows.Forms.ToolStripMenuItem toggleMenuVisibilityMenuItem; // Declaration
+        private System.Windows.Forms.ToolStrip mainToolStrip; // Declaration
+        private System.Windows.Forms.ToolStripButton penToolStripButton; // Declaration
+        private System.Windows.Forms.ToolStripButton penColorToolStripButton; // Declaration
+        private System.Windows.Forms.ToolStripButton penSizeToolStripButton; // Declaration
+        private System.Windows.Forms.ToolStripButton selectToolStripButton; // Declaration
     }
 }
