@@ -24,10 +24,12 @@ namespace LousaInterativa
         private double _currentFormOpacity = 1.0; // Field for current form opacity level
         private bool _isPenToolActive = false; // Field for pen tool state
         private bool _isSelectToolActive = false; // Field for select tool state
+        private bool _isLinesToolActive = false; // Field for the new Lines tool state
         private System.Drawing.Color _currentPenColor = System.Drawing.Color.Black; // Field for current pen color
         private int _currentPenSize = 1; // Field for current pen size
         private System.Collections.Generic.List<DrawableLine> _drawnLines = new System.Collections.Generic.List<DrawableLine>();
-        private System.Drawing.Point? _currentLineStartPoint = null;
+        // private System.Drawing.Point? _currentLineStartPoint = null; // REMOVED - Old pen tool's start point
+        private System.Drawing.Point? _currentLineStartPointMiddleMouse = null; // For the new Lines tool
         private DrawableLine _selectedLine = null; // Field to store the currently selected line
 
         public FrmLousaInterativa()
@@ -65,17 +67,31 @@ namespace LousaInterativa
                 }
             }
 
-            // Optional: Draw a visual marker for the current line's start point if it's set
-            if (this._currentLineStartPoint != null)
+            // Optional: Draw a visual marker for the current line's start point if it's set (old pen tool)
+            // Only show if pen tool was somehow active and a point was set. Given pen tool is disabled, this is defensive.
+            // if (this._isPenToolActive && this._currentLineStartPoint != null) // REMOVED - _currentLineStartPoint is removed
+            // {
+            //     // Example: Draw a small circle at the start point
+            //     // Adjust color and size as needed
+            //     using (System.Drawing.SolidBrush startPointBrush = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(128, this._currentPenColor))) // Semi-transparent version of pen color
+            //     {
+            //         int markerSize = Math.Max(2, this._currentPenSize / 2 + 2); // Make marker size relative to pen size but not too small
+            //         e.Graphics.FillEllipse(startPointBrush,
+            //                                this._currentLineStartPoint.Value.X - markerSize / 2,
+            //                                this._currentLineStartPoint.Value.Y - markerSize / 2,
+            //                                markerSize, markerSize);
+            //     }
+            // }
+
+            // Visual marker for the new "Lines" tool's first point (middle mouse)
+            if (this._isLinesToolActive && this._currentLineStartPointMiddleMouse != null)
             {
-                // Example: Draw a small circle at the start point
-                // Adjust color and size as needed
-                using (System.Drawing.SolidBrush startPointBrush = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(128, this._currentPenColor))) // Semi-transparent version of pen color
+                using (System.Drawing.SolidBrush startPointBrush = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(128, this._currentPenColor))) // Semi-transparent
                 {
-                    int markerSize = Math.Max(2, this._currentPenSize / 2 + 2); // Make marker size relative to pen size but not too small
+                    int markerSize = Math.Max(2, this._currentPenSize / 2 + 2);
                     e.Graphics.FillEllipse(startPointBrush,
-                                           this._currentLineStartPoint.Value.X - markerSize / 2,
-                                           this._currentLineStartPoint.Value.Y - markerSize / 2,
+                                           this._currentLineStartPointMiddleMouse.Value.X - markerSize / 2,
+                                           this._currentLineStartPointMiddleMouse.Value.Y - markerSize / 2,
                                            markerSize, markerSize);
                 }
             }
@@ -119,27 +135,10 @@ namespace LousaInterativa
         {
             if (this._isPenToolActive && e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                // Existing pen tool logic for drawing lines
-                if (this._currentLineStartPoint == null)
-                {
-                    // First click: define start point
-                    this._currentLineStartPoint = e.Location;
-                    this.Invalidate(); // Trigger repaint to draw the start point marker
-                }
-                else
-                {
-                    // Second click: define end point and complete the line
-                    DrawableLine newLine = new DrawableLine(
-                        this._currentLineStartPoint.Value,
-                        e.Location,
-                        this._currentPenColor,
-                        this._currentPenSize
-                    );
-                    this._drawnLines.Add(newLine);
-                    this._currentLineStartPoint = null; // Reset for the next line
-
-                    this.Invalidate(); // Trigger a repaint to draw the new line
-                }
+                // This block is effectively dead code as _isPenToolActive is always false.
+                // Content related to _currentLineStartPoint was here.
+                // For safety and clarity, ensuring no operations if it were somehow true:
+                this.Invalidate(); // Invalidate if any visual change was expected
             }
             else if (this._isSelectToolActive && e.Button == System.Windows.Forms.MouseButtons.Left)
             {
@@ -163,6 +162,27 @@ namespace LousaInterativa
                 }
 
                 this.Invalidate(); // Trigger a repaint to show/hide selection feedback
+            }
+            else if (this._isLinesToolActive && e.Button == System.Windows.Forms.MouseButtons.Middle)
+            {
+                if (this._currentLineStartPointMiddleMouse == null)
+                {
+                    this._currentLineStartPointMiddleMouse = e.Location;
+                    // Optional: Add visual feedback for the first point if desired, then Invalidate()
+                    this.Invalidate(); // To draw the start point marker if implemented in Form1_Paint
+                }
+                else
+                {
+                    DrawableLine newLine = new DrawableLine(
+                        this._currentLineStartPointMiddleMouse.Value,
+                        e.Location,
+                        this._currentPenColor, // Use existing pen color for now
+                        this._currentPenSize   // Use existing pen size for now
+                    );
+                    this._drawnLines.Add(newLine);
+                    this._currentLineStartPointMiddleMouse = null; // Reset for the next line
+                    this.Invalidate(); // Trigger a repaint
+                }
             }
         }
 
@@ -228,9 +248,16 @@ namespace LousaInterativa
             {
                 this.TransparencyKey = Color.Empty;
             }
+
+            // Ensure pen tool is not active on load, as it's being disabled.
+            this._isPenToolActive = false;
+            if (this.penToolStripButton != null) // Should exist, but good practice to check
+            {
+                this.penToolStripButton.Checked = false;
+            }
         }
 
-        private void penSizeToolStripButton_Click(object sender, EventArgs e)
+        private void lineThicknessToolStripButton_Click(object sender, EventArgs e) // Renamed from penSizeToolStripButton_Click
         {
             // Create an instance of the PenSizeForm, passing the current pen size
             using (PenSizeForm penSizeForm = new PenSizeForm(this._currentPenSize))
@@ -252,7 +279,7 @@ namespace LousaInterativa
             }
         }
 
-        private void penColorToolStripButton_Click(object sender, EventArgs e)
+        private void lineColorToolStripButton_Click(object sender, EventArgs e) // Renamed from penColorToolStripButton_Click
         {
             using (System.Windows.Forms.ColorDialog colorDialog = new System.Windows.Forms.ColorDialog())
             {
@@ -497,25 +524,16 @@ namespace LousaInterativa
 
         private void penToolStripButton_Click(object sender, EventArgs e)
         {
-            // penToolStripButton.Checked state is automatically toggled due to CheckOnClick = true
-            this._isPenToolActive = this.penToolStripButton.Checked;
-
-            if (this._isPenToolActive)
-            {
-                this.Cursor = System.Windows.Forms.Cursors.Cross; // Use Crosshair cursor for pen
-                if (this.selectToolStripButton != null)
-                {
-                    this.selectToolStripButton.Checked = false;
-                }
-                this._isSelectToolActive = false; // Ensure select tool is deactivated
-                // _currentLineStartPoint is managed by drawing logic when pen is active
-            }
-            else // Pen tool deactivated
-            {
-                this.Cursor = System.Windows.Forms.Cursors.Default;
-                this._currentLineStartPoint = null; // Cancel pending line if pen tool is deselected
-                this.Invalidate(); // Redraw to clear start point marker
-            }
+            // Pen tool is disabled
+            this._isPenToolActive = false;
+            this.penToolStripButton.Checked = false; // Ensure it's always unchecked
+            this.Cursor = System.Windows.Forms.Cursors.Default;
+            // if (this._currentLineStartPoint != null) // REMOVED - _currentLineStartPoint is removed
+            // {
+            //     this._currentLineStartPoint = null;
+            //     this.Invalidate();
+            // }
+            this.Invalidate(); // Ensure repaint if any visual assumptions were tied to old pen state
         }
 
         private void selectToolStripButton_Click(object sender, EventArgs e)
@@ -528,18 +546,60 @@ namespace LousaInterativa
                 if (this.penToolStripButton != null)
                 {
                     this.penToolStripButton.Checked = false;
+                    // _isPenToolActive = false; // This is handled by penToolStripButton_Click
                 }
-                this._isPenToolActive = false; // Ensure pen tool is deactivated
+                this._isPenToolActive = false; // Explicitly ensure pen tool is deactivated
 
-                // Cancel any pending line drawing from the pen tool
-                if (this._currentLineStartPoint != null)
+                if (this.linesToolStripButton != null)
                 {
-                    this._currentLineStartPoint = null;
-                    this.Invalidate(); // Redraw to clear any start point marker
+                    this.linesToolStripButton.Checked = false;
+                }
+                this._isLinesToolActive = false; // Deactivate Lines tool
+
+                // Cancel any pending line drawing from the pen tool (old) - REMOVED _currentLineStartPoint
+                // if (this._currentLineStartPoint != null)
+                // {
+                //     this._currentLineStartPoint = null;
+                //     this.Invalidate();
+                // }
+                // Cancel any pending line drawing from the Lines tool (new)
+                if (this._currentLineStartPointMiddleMouse != null)
+                {
+                    this._currentLineStartPointMiddleMouse = null;
+                    this.Invalidate();
                 }
             }
             // If select tool is unchecked, another tool's click handler will manage cursor and active state.
             // If no other tool becomes active, cursor remains Default.
+        }
+
+        private void linesToolStripButton_Click(object sender, EventArgs e)
+        {
+            _isLinesToolActive = this.linesToolStripButton.Checked;
+
+            if (_isLinesToolActive)
+            {
+                this.Cursor = System.Windows.Forms.Cursors.Cross;
+                // Deactivate other tools
+                if (this.selectToolStripButton != null)
+                {
+                    this.selectToolStripButton.Checked = false;
+                    _isSelectToolActive = false;
+                }
+                // Ensure the old pen tool (if its logic wasn't fully removed) is also deactivated
+                if (this.penToolStripButton != null) // penToolStripButton might still exist but be invisible
+                {
+                    this.penToolStripButton.Checked = false;
+                    _isPenToolActive = false;
+                }
+                 _currentLineStartPointMiddleMouse = null; // Reset any pending line from this tool
+            }
+            else
+            {
+                this.Cursor = System.Windows.Forms.Cursors.Default;
+                _currentLineStartPointMiddleMouse = null; // Cancel pending line if Lines tool is deselected
+                this.Invalidate(); // Redraw to clear any visual marker if one was added for middle mouse
+            }
         }
 
         private void fullScreenMenuItem_Click(object sender, System.EventArgs e)

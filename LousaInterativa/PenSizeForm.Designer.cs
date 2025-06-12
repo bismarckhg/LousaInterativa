@@ -52,7 +52,7 @@ namespace LousaInterativa
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 2;
-            this.okButton.Text = "OK";
+            this.okButton.Text = "OK"; // Standard, often kept as "OK"
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
             //
@@ -63,7 +63,7 @@ namespace LousaInterativa
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 3;
-            this.cancelButton.Text = "Cancel";
+            this.cancelButton.Text = "Cancelar"; // Translated to Portuguese
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             //
@@ -83,7 +83,7 @@ namespace LousaInterativa
             this.MinimizeBox = false;
             this.Name = "PenSizeForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Pen Size";
+            this.Text = "Selecionar Espessura da Linha"; // Translated to Portuguese
             ((System.ComponentModel.ISupportInitialize)(this.sizeTrackBar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
