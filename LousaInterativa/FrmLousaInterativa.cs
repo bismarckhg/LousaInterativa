@@ -735,57 +735,45 @@ namespace LousaInterativa
 
         private void selectToolStripButton_Click(object sender, EventArgs e)
         {
-            this._isSelectToolActive = this.selectToolStripButton.Checked;
+            // DeactivateAllTools will use selectToolStripButton.Checked to set _isSelectToolActive.
+            DeactivateAllTools(selectToolStripButton);
 
             if (this._isSelectToolActive)
             {
                 this.Cursor = System.Windows.Forms.Cursors.Default; // Default cursor for select tool
-                if (this.penToolStripButton != null)
-                {
-                    this.penToolStripButton.Checked = false;
-                    // _isPenToolActive = false; // This is handled by penToolStripButton_Click
-                }
-                this._isPenToolActive = false; // Explicitly ensure pen tool is deactivated
 
-                if (this.linesToolStripButton != null)
-                {
-                    this.linesToolStripButton.Checked = false;
-                }
-                this._isLinesToolActive = false; // Deactivate Lines tool
-
-                // Cancel any pending line drawing from the pen tool (old) - REMOVED _currentLineStartPoint
-                // if (this._currentLineStartPoint != null)
-                // {
-                //     this._currentLineStartPoint = null;
-                //     this.Invalidate();
-                // }
-                // Cancel any pending line drawing from the Lines tool (new)
+                // Cancel any pending line drawing from the Lines tool.
+                // _isPenToolActive and _isLinesToolActive are already set to false by DeactivateAllTools
+                // if this tool (select) is the one being activated.
+                // The old pen tool's start point (_currentLineStartPoint) is removed.
                 if (this._currentLineStartPointMiddleMouse != null)
                 {
                     this._currentLineStartPointMiddleMouse = null;
-                    // this.Invalidate(); // FrmLousaInterativa no longer draws this marker
+                    // FrmLousaInterativa no longer draws this marker, DrawingSurface handles it.
                 }
                 if (_drawingSurface != null)
                 {
+                    // CurrentLineStartPoint on DrawingSurface is also cleared by DeactivateAllTools
+                    // if lines tool is not active. However, if select is activated, it's good to be explicit.
                     _drawingSurface.CurrentLineStartPoint = null;
                     _drawingSurface.Invalidate(); // Clear marker on surface
                 }
             }
-            // If select tool is unchecked (meaning it was just deactivated by the user clicking it again)
-            // or if another tool was activated (which DeactivateAllTools would have handled by unchecking this one),
-            // ensure selection state is cleared.
-            if (!selectToolStripButton.Checked)
-            {
-                 _selectedLine = null;
-                 if (_drawingSurface != null) _drawingSurface.SelectedLine = null;
-            }
-            // DeactivateAllTools has already handled unchecking other buttons and updating most state.
-            // The primary role here is to set the correct cursor if this tool IS active.
+            // If select tool is unchecked (deactivated), _isSelectToolActive will be false.
+            // DeactivateAllTools already handles clearing _selectedLine and _drawingSurface.SelectedLine.
+
+            // The cursor is set to Cursors.Default by DeactivateAllTools initially.
+            // If _isSelectToolActive is true, this confirms it (or sets it again, which is harmless).
+            // If _isSelectToolActive is false, another tool's handler might set a different cursor,
+            // or it remains Default.
             if (_isSelectToolActive)
             {
                  this.Cursor = Cursors.Default;
             }
-             _drawingSurface?.Invalidate(); // Ensure selection visual is updated
+            // else if some other tool became active, its click handler will set the cursor.
+            // if no tool is active, cursor remains default.
+
+            _drawingSurface?.Invalidate(); // Ensure selection visual is updated/cleared.
         }
 
         private void linesToolStripButton_Click(object sender, EventArgs e)
