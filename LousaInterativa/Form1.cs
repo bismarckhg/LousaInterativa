@@ -164,6 +164,16 @@ namespace LousaInterativa
 
                 this.Invalidate(); // Trigger a repaint to show/hide selection feedback
             }
+            else if (e.Button == System.Windows.Forms.MouseButtons.Middle)
+            {
+                // Middle mouse button click toggles the pen tool's active state.
+                // This simulates a click on the penToolStripButton to ensure consistent state management.
+                if (this.penToolStripButton != null)
+                {
+                    this.penToolStripButton.Checked = !this.penToolStripButton.Checked; // Toggle the checked state
+                    penToolStripButton_Click(this.penToolStripButton, EventArgs.Empty); // Call the existing handler to apply the change
+                }
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -411,7 +421,13 @@ namespace LousaInterativa
             SettingsManager.SaveSettings(_currentSettings);
         }
 
-        private void ToggleMenuVisibility()
+        // Note: When this transparency mode (using TransparencyKey) is active,
+        // mouse clicks on the transparent areas of the form will pass through to
+        // windows underneath. Therefore, drawing new lines directly on these fully
+        // transparent sections is not possible. To draw, ensure the window is
+        // opaque or use the semi-transparency feature (F9 or Tools > Adjust Opacity),
+        // which allows the form to still receive mouse clicks for drawing.
+        private void ToggleWindowTransparency()
         {
             if (this.menuStrip1 != null)
             {
@@ -435,6 +451,10 @@ namespace LousaInterativa
             ToggleMenuVisibility();
         }
 
+        // Applying semi-transparency (Opacity < 1.0) to the form.
+        // Drawing on the form is intended to work in this state, as the form
+        // should continue to receive mouse events. This allows for 'trace over'
+        // or 'annotate over' functionality for content visible behind the form.
         private void ApplyFormOpacity(double opacityLevel, bool saveSetting = true)
         {
             // Clamp opacityLevel between 0.0 (fully transparent) and 1.0 (fully opaque)
